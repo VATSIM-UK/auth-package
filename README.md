@@ -1,5 +1,6 @@
 # VATSIM UK CAS Laravel Package
 
+[![Build Status](https://travis-ci.com/VATSIM-UK/auth-package.svg?branch=master)](https://travis-ci.com/VATSIM-UK/auth-package)
 ## About
 This package provides the boilerplate implementation to quickly and easily interface with the VATSIM UK Central Authentication Service (CAS). It allows for Eloquent-esque relationships and niceties to be maintained, whilst still keeping each service separate from each other.
 
