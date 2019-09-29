@@ -32,8 +32,7 @@ abstract class RemoteModel extends Model
         $argument = "ids:" . json_encode($ids);
         $query = new Builder(static::$manyMethod, static::generateParams($columns), $argument);
         $response = $query->execute($token);
-
-        if (!$response->isEmpty()) {
+        if ($response->isEmpty()) {
             return null;
         }
 
