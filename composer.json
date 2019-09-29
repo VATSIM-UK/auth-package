@@ -1,0 +1,39 @@
+{
+    "name": "vatsimuk/auth-package",
+    "description": "A Laravel Library for interfacing with the VATSIM UK Central Authentication Service",
+    "type": "library",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.2",
+        "illuminate/support": "^6.0",
+        "illuminate/database": "^6.0",
+        "illuminate/http": "^6.0",
+        "illuminate/routing": "^6.0",
+        "guzzlehttp/guzzle": "^6.3",
+        "ext-json": "*",
+        "lcobucci/jwt": "^3.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0",
+        "orchestra/testbench": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "VATSIMUK\\Auth\\Remote\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "VATSIMUK\\Auth\\Remote\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "VATSIMUK\\Auth\\Remote\\UKAuthServiceProvider"
+            ]
+        }
+    }
+}
