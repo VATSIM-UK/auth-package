@@ -5,7 +5,7 @@ namespace VATSIMUK\Auth\Remote\Tests;
 use Orchestra\Testbench\TestCase;
 use VATSIMUK\Auth\Remote\GraphQL\Builder as PackageBuilder;
 use VATSIMUK\Auth\Remote\GraphQL\Response as PackageResponse;
-use VATSIMUK\Auth\Tests\Fixtures\MockJsonResponse;
+use VATSIMUK\Auth\Remote\Tests\Fixtures\MockJsonResponse;
 
 class ResponseClassTest extends TestCase
 {
