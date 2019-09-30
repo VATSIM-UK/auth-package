@@ -65,4 +65,19 @@ class Response
         }
         return $this->jsonResponse->errors;
     }
+
+    /**
+     * Generates a error response class
+     * @return Response
+     */
+    public static function newServerErrorResponse($query, $message = "There was a server error trying to run this query")
+    {
+        return new self([
+            'errors' => [
+                [
+                    'message' => $message
+                ]
+            ]
+        ], $query);
+    }
 }

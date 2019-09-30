@@ -39,7 +39,7 @@ class Builder
         if (!$token) {
             $token = $this->getAuthAccessToken();
             if (!$token) {
-                return null;
+                return Response::newServerErrorResponse($this, "Unable to retrieve Auth access token");
             }
         }
 
@@ -62,7 +62,7 @@ class Builder
             );
         } catch (ConnectException $e) {
             //TODO: Log to Bugsnag
-            return null;
+            return Response::newServerErrorResponse($this);
         }
 
         return new Response($response, $this);
