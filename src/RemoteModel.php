@@ -81,7 +81,7 @@ abstract class RemoteModel extends Model
             });
         }
 
-        return array_unique(array_merge(['id'], $columns ? $columns : static::$defaultFields));
+        return array_unique(array_merge(['id'], $columns ? $columns : static::$defaultFields), SORT_REGULAR);
     }
 
     /**

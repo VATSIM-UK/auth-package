@@ -5,10 +5,13 @@ namespace VATSIMUK\Auth\Remote\Models;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use VATSIMUK\Auth\Remote\GraphQL\Builder;
+use VATSIMUK\Auth\Remote\Models\Concerns\HasRatings;
 use VATSIMUK\Auth\Remote\RemoteModel;
 
 class RemoteUser extends RemoteModel implements Authenticatable
 {
+    use HasRatings;
+
     protected static $unguarded = true;
     protected static $singleMethod = "user";
     protected static $manyMethod = "users";
