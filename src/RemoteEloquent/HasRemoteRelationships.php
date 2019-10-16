@@ -35,7 +35,7 @@ trait HasRemoteRelationships
         // First, we'll need to determine the foreign key and "other key" for the
         // relationship. Once we have determined the keys we'll make the query
         // instances as well as the relationship instances we need for this.
-        $instance = $this->newRelatedInstance($related);
+        $instance = is_object($related) ? $related : $this->newRelatedInstance($related);
 
         $foreignPivotKey = $foreignPivotKey ?: $this->getForeignKey();
 
