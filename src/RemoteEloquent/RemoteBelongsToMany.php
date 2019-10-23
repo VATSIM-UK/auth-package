@@ -4,7 +4,7 @@
 namespace VATSIMUK\Auth\Remote\RemoteEloquent;
 
 
-use App\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +13,7 @@ class RemoteBelongsToMany extends BelongsToMany
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array  $columns
+     * @param array $columns
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function get($columns = ['*'])
@@ -25,18 +25,20 @@ class RemoteBelongsToMany extends BelongsToMany
 
         $columns = $builder->getQuery()->columns ? [] : $columns;
 
+
         // Get ID's via pivot
-        $results = DB::table($this->table)->where($this->foreignPivotKey, $this->parent->id)->get();
+
+        $results = DB::table($this->table)->where($this->foreignPivotKey, $this->findParentKey())->get();
 
         // Query related models
-        if(!$results){
-            return null;
+        if ($results->isEmpty()) {
+            return new Collection();
         }
 
         $models = $this->related::findMany($results->pluck($this->relatedPivotKey)->all(), $columns)->all();
 
         // Add in the pivot attributes
-        foreach ($models as $key => $model){
+        foreach ($models as $key => $model) {
             $pivotRaw = $results->where($this->relatedPivotKey, $model->getKey())->first();
             $model->setRelation($this->accessor, $this->newExistingPivot(get_object_vars($pivotRaw)));
         }
@@ -49,5 +51,23 @@ class RemoteBelongsToMany extends BelongsToMany
         }
 
         return $this->related->newCollection($models);
+    }
+
+    private function findParentKey()
+    {
+        if ($this->parent->id) {
+            return $this->parent->id;
+        }
+
+        if (empty($this->query->getQuery()->wheres)) {
+            return null;
+        }
+
+        foreach ($this->query->getQuery()->wheres as $where) {
+            if ($where['column'] == "$this->table.$this->foreignPivotKey") {
+                return $where['values'][0];
+            }
+        }
+        return null;
     }
 }
