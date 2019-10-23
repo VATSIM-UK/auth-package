@@ -27,7 +27,6 @@ class RemoteBelongsToMany extends BelongsToMany
 
 
         // Get ID's via pivot
-
         $results = DB::table($this->table)->where($this->foreignPivotKey, $this->findParentKey())->get();
 
         // Query related models
@@ -51,6 +50,17 @@ class RemoteBelongsToMany extends BelongsToMany
         }
 
         return $this->related->newCollection($models);
+    }
+
+    public function hasByID($id)
+    {
+        if(is_object($id)){
+            $id = $id->id;
+        }
+        return DB::table($this->table)
+            ->where($this->foreignPivotKey, $this->findParentKey())
+            ->where($this->relatedPivotKey, $id)
+            ->count() > 0;
     }
 
     private function findParentKey()
