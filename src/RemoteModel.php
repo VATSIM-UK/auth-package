@@ -32,11 +32,12 @@ abstract class RemoteModel extends Model
         $argument = "ids:" . json_encode($ids);
         $query = new Builder(static::$manyMethod, static::generateParams($columns), $argument);
         $response = $query->execute($token);
-        if ($response->isEmpty()) {
-            return null;
-        }
 
         $collection = new Collection();
+        if ($response->isEmpty()) {
+            return $collection;
+        }
+
         foreach ($response->getResults() as $user) {
             $collection->push(static::initModelWithData($user));
         }

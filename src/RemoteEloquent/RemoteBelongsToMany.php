@@ -25,7 +25,6 @@ class RemoteBelongsToMany extends BelongsToMany
 
         $columns = $builder->getQuery()->columns ? [] : $columns;
 
-
         // Get ID's via pivot
         $results = DB::table($this->table)->where($this->foreignPivotKey, $this->findParentKey())->get();
 
