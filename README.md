@@ -35,7 +35,7 @@ After login via the SSO as above, the user is returned to `/auth/login/complete`
     
         'ukauth' => [
             'driver' => 'jwt',
-            'provider' => 'ukauth',
+            'provider' => 'users',
         ],
     ],
     ```
