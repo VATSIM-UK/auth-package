@@ -50,3 +50,6 @@ return [
   'auth_user_model' => \App\User::class
 ];
 ```
+
+### Important Notes
+* In order for the requirement for users with secondary authentication (a password) to have to re-authenticate with their password each session, cookies should be sent with calls to the API

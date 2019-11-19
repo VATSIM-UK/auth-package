@@ -68,6 +68,20 @@ class Builder
         return new Response($response, $this);
     }
 
+    public static function checkAlive()
+    {
+        $client = new Client();
+        try {
+            $response = json_decode($client->get(config('ukauth.root_url') . '/api/pulse')->getBody()->getContents());
+            if($response && $response->alive){
+                return true;
+            }
+        } catch (ConnectException $e) {
+            //TODO: Log to Bugsnag
+        }
+        return false;
+    }
+
     /**
      * Generates or fetches Auth service token
      * @return string|null
