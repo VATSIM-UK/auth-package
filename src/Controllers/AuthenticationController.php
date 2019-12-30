@@ -23,7 +23,7 @@ class AuthenticationController extends Controller
             'scope' => '',
         ]);
 
-        return config('ukauth.root_url') . config('ukauth.oauth_path') . '/authorize?' . $query;
+        return redirect(config('ukauth.root_url') . config('ukauth.oauth_path') . '/authorize?' . $query);
     }
 
     public function verifyLogin(Request $request)
