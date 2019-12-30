@@ -30,11 +30,11 @@ class UKAuthUserProvider implements UserProvider
      */
     public function retrieveById($identifier)
     {
-        return config('ukauth.auth_user_model')::find($identifier);
+        return $this->model::find($identifier);
     }
 
     public function retrieveByToken($identifier, $token){
-        return config('ukauth.auth_user_model')::findWithAccessToken($token);
+        return $this->model::findWithAccessToken($token);
     }
 
     public function updateRememberToken(Authenticatable $user, $token){}

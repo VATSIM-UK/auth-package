@@ -89,6 +89,9 @@ class UKAuthGuard implements Guard
     public function validate(array $credentials = [])
     {
         if (!$this->request->bearerToken()) {
+            if($this->user){
+                return true;
+            }
             return false;
         }
 
