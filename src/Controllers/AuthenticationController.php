@@ -29,6 +29,7 @@ class AuthenticationController extends Controller
     public function verifyLogin(Request $request)
     {
         $http = new Client();
+        //TODO: Handle error 400 bad request. This happens when the code given has expired, been timed out, or already consumed
         $response = $http->post(config('ukauth.root_url') . config('ukauth.oauth_path') . '/token', [
             'form_params' => [
                 'grant_type' => 'authorization_code',
@@ -51,6 +52,6 @@ class AuthenticationController extends Controller
 
 
         return redirect(url('/auth/complete') . "?token=$token&expires_at=$expires")
-            ->withCookies([cookie('ukauth_sesh_id', encrypt($time.$user->id))]);
+            ->withCookies([cookie('ukauth_sesh_id', encrypt($token->getClaim('iat').$user->id))]);
     }
 }
