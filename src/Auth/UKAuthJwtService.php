@@ -24,7 +24,7 @@ class UKAuthJwtService
             ->withClaim('id', $user->id)
             ->withClaim('name_first', $user->name_first)
             ->withClaim('name_last', $user->name_last)
-            ->withClaim('roles', $user->roles->pluck('name')->all())
+            ->withClaim('roles', collect($user->roles)->pluck('name')->all())
             ->withClaim('all_permissions', $user->all_permissions)
             ->withClaim('access_token', $accessToken)
             ->withClaim('has_password', $user->has_password)
