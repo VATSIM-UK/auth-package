@@ -95,27 +95,12 @@ class UKAuthGuard implements Guard
             return false;
         }
 
-        $token = (new Parser())->parse((string)$this->request->bearerToken());
-
-        if (!$token->verify(new Sha256(), new Key(config('app.secret')))) {
+        $user = UKAuthJwtService::validateTokenAndGetUser($this->request->bearerToken());
+        if(!$user){
             return false;
         }
 
-        $userBaseInfo = [
-            'id' => $token->getClaim('uid'),
-            'iat' => $token->getClaim('iat'),
-            'name_first' => $token->getClaim('name_first'),
-            'name_last' => $token->getClaim('name_last'),
-            'auth_token' => $token->getClaim('access_token'),
-            'session_locked' => $token->getClaim('session_locked'),
-        ];
-
-        // If has session id, check is same session. If not, force authentication
-        if ($userBaseInfo['session_locked'] && (!Cookie::get('ukauth_sesh_id') || decrypt(Cookie::get('ukauth_sesh_id')) != $userBaseInfo['iat'].$userBaseInfo['id'])) {
-            return false;
-        }
-
-        $this->setUser(config('ukauth.auth_user_model')::initModelWithData($userBaseInfo));
+        $this->setUser($user);
 
         // Attempt to check user's status with CAS
         if (Builder::checkAlive()) {

@@ -2,15 +2,15 @@
 
 namespace VATSIMUK\Auth\Remote\Controllers;
 
-use App\User;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Cookie;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key;
+use VATSIMUK\Auth\Remote\Auth\UKAuthJwtService;
+use VATSIMUK\Auth\Remote\Models\RemoteUser;
 
 class AuthenticationController extends Controller
 {
@@ -29,7 +29,6 @@ class AuthenticationController extends Controller
     public function verifyLogin(Request $request)
     {
         $http = new Client();
-
         $response = $http->post(config('ukauth.root_url') . config('ukauth.oauth_path') . '/token', [
             'form_params' => [
                 'grant_type' => 'authorization_code',
@@ -43,20 +42,12 @@ class AuthenticationController extends Controller
         $response = json_decode((string)$response->getBody(), true);
 
         // Create JWT for service auth
-        $user = User::findWithAccessToken($response['access_token'], ['name_first', 'name_last', 'has_password']);
-
+        $user = RemoteUser::findWithAccessToken($response['access_token'], ['name_first', 'name_last', 'has_password', 'roles' => [
+            'name'
+        ], 'all_permissions']);
         $expires = Carbon::now()->addSeconds($response['expires_in'])->getTimestamp();
 
-        $token = (new Builder())->issuedBy(url('/'))
-            ->permittedFor(url('/'))
-            ->issuedAt($time = time())
-            ->expiresAt($expires)
-            ->withClaim('uid', $user->id)
-            ->withClaim('name_first', $user->name_first)
-            ->withClaim('name_last', $user->name_last)
-            ->withClaim('access_token', $response['access_token'])
-            ->withClaim('session_locked', $user->has_password ? true : false)
-            ->getToken(new Sha256(), new Key(config('app.secret')));
+        $token = UKAuthJwtService::createToken($user, $expires, $response['access_token']);
 
 
         return redirect(url('/auth/complete') . "?token=$token&expires_at=$expires")

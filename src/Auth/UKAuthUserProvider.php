@@ -3,7 +3,6 @@
 
 namespace VATSIMUK\Auth\Remote\Auth;
 
-
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
 use VATSIMUK\Auth\Remote\Models\RemoteUser;
