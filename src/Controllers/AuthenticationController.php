@@ -4,8 +4,11 @@ namespace VATSIMUK\Auth\Remote\Controllers;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key;
@@ -29,16 +32,22 @@ class AuthenticationController extends Controller
     public function verifyLogin(Request $request)
     {
         $http = new Client();
-        //TODO: Handle error 400 bad request. This happens when the code given has expired, been timed out, or already consumed
-        $response = $http->post(config('ukauth.root_url') . config('ukauth.oauth_path') . '/token', [
-            'form_params' => [
-                'grant_type' => 'authorization_code',
-                'client_id' => config('ukauth.client_id'),
-                'client_secret' => config('ukauth.client_secret'),
-                'redirect_uri' => route('auth.login.verify'),
-                'code' => $request->code,
-            ],
-        ]);
+        try {
+            $response = $http->post(config('ukauth.root_url') . config('ukauth.oauth_path') . '/token', [
+                'form_params' => [
+                    'grant_type' => 'authorization_code',
+                    'client_id' => config('ukauth.client_id'),
+                    'client_secret' => config('ukauth.client_secret'),
+                    'redirect_uri' => route('auth.login.verify'),
+                    'code' => $request->code,
+                ],
+            ]);
+        } catch (ClientException $e) {
+            if ($e->getCode() == 400 && Str::contains($e->getMessage(), 'invalid_request')) {
+                Log::info("User at {$request->ip()} tried to verify their Auth SSO login, however the details were invalid");
+                return $this->login($request);
+            }
+        }
 
         $response = json_decode((string)$response->getBody(), true);
 
@@ -52,6 +61,6 @@ class AuthenticationController extends Controller
 
 
         return redirect(url('/auth/complete') . "?token=$token&expires_at=$expires")
-            ->withCookies([cookie('ukauth_sesh_id', encrypt($token->getClaim('iat').$user->id))]);
+            ->withCookies([cookie('ukauth_sesh_id', encrypt($token->getClaim('iat') . $user->id))]);
     }
 }

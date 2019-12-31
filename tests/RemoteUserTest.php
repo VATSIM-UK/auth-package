@@ -3,7 +3,6 @@
 
 namespace VATSIMUK\Auth\Remote\Tests;
 
-use Orchestra\Testbench\TestCase;
 use VATSIMUK\Auth\Remote\Models\RemoteUser;
 use VATSIMUK\Auth\Remote\RemoteEloquent\RemoteBuilder;
 

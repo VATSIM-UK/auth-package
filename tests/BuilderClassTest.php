@@ -3,7 +3,6 @@
 
 namespace VATSIMUK\Auth\Remote\Tests;
 
-use Orchestra\Testbench\TestCase;
 use VATSIMUK\Auth\Remote\GraphQL\Builder;
 
 class BuilderClassTest extends TestCase
