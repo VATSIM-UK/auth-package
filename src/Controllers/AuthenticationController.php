@@ -44,9 +44,10 @@ class AuthenticationController extends Controller
             ]);
         } catch (ClientException $e) {
             if ($e->getCode() == 400 && Str::contains($e->getMessage(), 'invalid_request')) {
-                Log::info("User at {$request->ip()} tried to verify their Auth SSO login, however the details were invalid");
+                Log::info("User at {$request->ip()} tried to verify their Auth SSO login, however the details were invalid", ["exception" => $e]);
                 return $this->login($request);
             }
+            throw $e;
         }
 
         $response = json_decode((string)$response->getBody(), true);
