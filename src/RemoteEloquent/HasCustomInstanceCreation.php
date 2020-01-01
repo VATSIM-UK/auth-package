@@ -17,11 +17,7 @@ trait HasCustomInstanceCreation
         if(is_object($class)){
             return $class;
         }
-
-        return tap(new $class, function ($instance) {
-            if (! $instance->getConnectionName()) {
-                $instance->setConnection($this->connection);
-            }
-        });
+        
+        return parent::newRelatedInstance($class);
     }
 }
