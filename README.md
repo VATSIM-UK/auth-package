@@ -51,5 +51,18 @@ return [
 ];
 ```
 
+### JWT Contents
+After the user has signed in via SSO they will be redirected as discussed above. The JWT is application specific, in that the JWT provided will only work and be accepted on the application is was generated on. It is also encrypted to prevent tampering with the JWT. The user's JWT contains several useful properties for the user, to prevent having to constantly call the Auth API for user details. These details are listed below - note that they will be automatically filled in to the user when accessed via `Auth::user()`.
+
+|Property| Description |
+|--|--|
+| id | The user's VATSIM CID |
+| name_first | The user's first name |
+| name_last | The user's last name |
+| access_token| The user's Auth API access token |
+| has_password (bool)| Whether or not the user has a secondary password set |
+| roles (array)| A list of the roles the user belongs to, by name. (e.g ["Role 1", "Role 2", ...]) |
+| permissions (array)| A list of all the user's permissions (e.g ["auth.permissions.create", "ukts.members.manage", ...]) |
+
 ### Important Notes
-* In order for the requirement for users with secondary authentication (a password) to have to re-authenticate with their password each session, cookies should be sent with calls to the API
+* In order for the requirement for users with secondary authentication (a password) to have to re-authenticate with their password each session to be met, cookies should be sent with calls to the API
