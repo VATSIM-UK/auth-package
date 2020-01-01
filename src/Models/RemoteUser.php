@@ -35,6 +35,11 @@ class RemoteUser extends RemoteModel implements Authenticatable
         }
         return parent::fresh($columns);
     }
+    
+    public function getNameAttribute()
+    {
+        return "{$this->name_first} {$this->name_last}";
+    }
 
     /**
      * Get the name of the unique identifier for the user.
