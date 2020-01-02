@@ -1,18 +1,15 @@
 <?php
 
 
-namespace VATSIMUK\Auth\Remote\Auth;
+namespace VATSIMUK\Support\Auth\Auth;
 
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
-use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\Signer\Key;
-use VATSIMUK\Auth\Remote\GraphQL\Builder;
+use VATSIMUK\Support\Auth\GraphQL\Builder;
+use VATSIMUK\Support\Auth\Services\JWTService;
 
 class UKAuthGuard implements Guard
 {
@@ -24,8 +21,8 @@ class UKAuthGuard implements Guard
     /**
      * Create a new authentication guard.
      *
-     * @param \Illuminate\Contracts\Auth\UserProvider $provider
-     * @param \Illuminate\Http\Request $request
+     * @param UserProvider $provider
+     * @param Request $request
      * @return void
      */
     public function __construct(UserProvider $provider, Request $request)
@@ -43,7 +40,7 @@ class UKAuthGuard implements Guard
      */
     public function check()
     {
-        return !is_null($this->user()) && $this->validate();
+        return ! is_null($this->user()) && $this->validate();
     }
 
     /**
@@ -53,17 +50,17 @@ class UKAuthGuard implements Guard
      */
     public function guest()
     {
-        return !$this->check();
+        return ! $this->check();
     }
 
     /**
      * Get the currently authenticated user.
      *
-     * @return \Illuminate\Contracts\Auth\Authenticatable|null
+     * @return Authenticatable|null
      */
     public function user()
     {
-        if (!is_null($this->user)) {
+        if (! is_null($this->user)) {
             return $this->user;
         }
     }
@@ -88,15 +85,15 @@ class UKAuthGuard implements Guard
      */
     public function validate(array $credentials = [])
     {
-        if (!$this->request->bearerToken()) {
-            if($this->user){
+        if (! $this->request->bearerToken()) {
+            if ($this->user) {
                 return true;
             }
             return false;
         }
 
-        $user = UKAuthJwtService::validateTokenAndGetUser($this->request->bearerToken());
-        if(!$user){
+        $user = JWTService::validateTokenAndGetUser($this->request->bearerToken());
+        if (! $user) {
             return false;
         }
 
@@ -106,7 +103,7 @@ class UKAuthGuard implements Guard
         if (Builder::checkAlive()) {
             $user = $this->user->fresh(['banned']);
             // Report unauthenticated if user doesn't exist (most likely token revoked) or is banned
-            if (!$user || $user->banned) {
+            if (! $user || $user->banned) {
                 return false;
             }
         }
@@ -117,7 +114,7 @@ class UKAuthGuard implements Guard
     /**
      * Set the current user.
      *
-     * @param \Illuminate\Contracts\Auth\Authenticatable $user
+     * @param Authenticatable $user
      * @return void
      */
     public function setUser(Authenticatable $user)

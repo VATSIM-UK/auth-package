@@ -1,12 +1,13 @@
 <?php
 
 
-namespace VATSIMUK\Auth\Remote\Models;
+namespace VATSIMUK\Support\Auth\Models;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use VATSIMUK\Auth\Remote\GraphQL\Builder;
-use VATSIMUK\Auth\Remote\Models\Concerns\HasRatings;
-use VATSIMUK\Auth\Remote\RemoteModel;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
+use VATSIMUK\Support\Auth\GraphQL\Builder;
+use VATSIMUK\Support\Auth\Models\Concerns\HasRatings;
 
 class RemoteUser extends RemoteModel implements Authenticatable
 {

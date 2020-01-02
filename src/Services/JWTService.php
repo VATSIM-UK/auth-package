@@ -1,7 +1,7 @@
 <?php
 
 
-namespace VATSIMUK\Auth\Remote\Auth;
+namespace VATSIMUK\Support\Auth\Services;
 
 
 use Illuminate\Support\Facades\Cookie;
@@ -10,10 +10,18 @@ use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Token;
-use VATSIMUK\Auth\Remote\Models\RemoteUser;
+use VATSIMUK\Support\Auth\Models\RemoteUser;
 
-class UKAuthJwtService
+class JWTService
 {
+    /**
+     * Creates a local auth JWT for the given user
+     *
+     * @param RemoteUser $user
+     * @param $expires_at
+     * @param $accessToken
+     * @return Token
+     */
     public static function createToken(RemoteUser $user, $expires_at, $accessToken): Token
     {
         return (new Builder())
@@ -31,6 +39,12 @@ class UKAuthJwtService
             ->getToken(new Sha256(), new Key(config('app.secret')));
     }
 
+    /**
+     * Validates a local auth JWT, and returns the user
+     *
+     * @param string $token
+     * @return bool|RemoteUser
+     */
     public static function validateTokenAndGetUser(string $token)
     {
         $token = (new Parser())->parse($token);

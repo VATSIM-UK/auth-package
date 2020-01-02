@@ -1,11 +1,14 @@
 <?php
 
-namespace VATSIMUK\Auth\Remote;
+namespace VATSIMUK\Support\Auth;
 
-use VATSIMUK\Auth\Remote\Auth\UKAuthGuard;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use VATSIMUK\Support\Auth\Auth\UKAuthGuard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
-use VATSIMUK\Auth\Remote\Auth\UKAuthUserProvider;
+use VATSIMUK\Support\Auth\Auth\UKAuthUserProvider;
 
 class UKAuthServiceProvider extends ServiceProvider
 {

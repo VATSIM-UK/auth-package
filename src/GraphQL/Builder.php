@@ -1,7 +1,7 @@
 <?php
 
 
-namespace VATSIMUK\Auth\Remote\GraphQL;
+namespace VATSIMUK\Support\Auth\GraphQL;
 
 
 use GuzzleHttp\Client;

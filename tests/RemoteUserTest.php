@@ -1,10 +1,12 @@
 <?php
 
 
-namespace VATSIMUK\Auth\Remote\Tests;
+namespace VATSIMUK\Support\Auth\Tests;
 
-use VATSIMUK\Auth\Remote\Models\RemoteUser;
-use VATSIMUK\Auth\Remote\RemoteEloquent\RemoteBuilder;
+use Illuminate\Database\Query\Builder;
+use VATSIMUK\Support\Auth\Models\RemoteBuilder;
+use VATSIMUK\Support\Auth\Models\RemoteModel;
+use VATSIMUK\Support\Auth\Models\RemoteUser;
 
 class RemoteUserTest extends TestCase
 {
@@ -38,14 +40,15 @@ class RemoteUserTest extends TestCase
 
     public function testItGeneratesParamsCorrectly()
     {
-        $this->assertEquals(['id', 'name_first', 'name_last'], RemoteUser::generateParams(null));
+        $builder = (new RemoteUser())->newQueryWithoutScopes();
+        $this->assertEquals(['id', 'name_first', 'name_last'], $builder->generateParams(null));
 
-        $this->assertEquals(['id', 'name_first', 'name_last'], RemoteUser::generateParams(["*"]));
+        $this->assertEquals(['id', 'name_first', 'name_last'], $builder->generateParams(["*"]));
 
-        $this->assertEquals(['id', 'name_first', 'name_last'], RemoteUser::generateParams([""]));
+        $this->assertEquals(['id', 'name_first', 'name_last'], $builder->generateParams([""]));
 
-        $this->assertEquals(['id', 'email'], RemoteUser::generateParams(["", "email"]));
+        $this->assertEquals(['id', 'email'], $builder->generateParams(["", "email"]));
 
-        $this->assertEquals(['id'], RemoteUser::generateParams(["id"]));
+        $this->assertEquals(['id'], $builder->generateParams(["id"]));
     }
 }

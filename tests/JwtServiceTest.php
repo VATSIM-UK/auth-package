@@ -1,17 +1,17 @@
 <?php
 
 
-namespace VATSIMUK\Auth\Remote\Tests;
+namespace VATSIMUK\Support\Auth\Tests;
 
 use Carbon\Carbon;
-use VATSIMUK\Auth\Remote\Auth\UKAuthJwtService;
-use VATSIMUK\Auth\Remote\Models\RemoteUser;
+use VATSIMUK\Support\Auth\Services\JWTService;
+use VATSIMUK\Support\Auth\Models\RemoteUser;
 
 class JwtServiceTest extends TestCase
 {
     public function testItCanGenerateAndReadTokenWithNoSecondaryPassword()
     {
-        $token = UKAuthJwtService::createToken(RemoteUser::initModelWithData([
+        $token = JWTService::createToken(RemoteUser::initModelWithData([
             'name_first' => 'First',
             'name_last' => 'Last',
             'has_password' => false,
@@ -26,13 +26,13 @@ class JwtServiceTest extends TestCase
         $this->assertNotNull($token);
         $this->assertEquals('Last', $token->getClaim('name_last'));
 
-        $this->assertInstanceOf(RemoteUser::class, UKAuthJwtService::validateTokenAndGetUser($token));
-        $this->assertFalse(UKAuthJwtService::validateTokenAndGetUser($token.'1'));
+        $this->assertInstanceOf(RemoteUser::class, JWTService::validateTokenAndGetUser($token));
+        $this->assertFalse(JWTService::validateTokenAndGetUser($token.'1'));
     }
 
     public function testItCanGenerateAndReadTokenWithSecondaryPassword()
     {
-        $token = UKAuthJwtService::createToken(RemoteUser::initModelWithData([
+        $token = JWTService::createToken(RemoteUser::initModelWithData([
             'name_first' => 'First',
             'name_last' => 'Last',
             'has_password' => true,
@@ -47,7 +47,7 @@ class JwtServiceTest extends TestCase
         $this->assertNotNull($token);
         $this->assertEquals('Last', $token->getClaim('name_last'));
 
-        $this->assertFalse(UKAuthJwtService::validateTokenAndGetUser($token));
-        $this->assertFalse(UKAuthJwtService::validateTokenAndGetUser($token.'1'));
+        $this->assertFalse(JWTService::validateTokenAndGetUser($token));
+        $this->assertFalse(JWTService::validateTokenAndGetUser($token.'1'));
     }
 }

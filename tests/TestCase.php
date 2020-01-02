@@ -1,10 +1,10 @@
 <?php
 
 
-namespace VATSIMUK\Auth\Remote\Tests;
+namespace VATSIMUK\Support\Auth\Tests;
 
 
-use VATSIMUK\Auth\Remote\Models\RemoteUser;
+use VATSIMUK\Support\Auth\Models\RemoteUser;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace VATSIMUK\Auth\Remote\Tests;
+namespace VATSIMUK\Support\Auth\Test;
 
 use Orchestra\Testbench\TestCase;
-use VATSIMUK\Auth\Remote\GraphQL\Builder as PackageBuilder;
-use VATSIMUK\Auth\Remote\GraphQL\Response as PackageResponse;
-use VATSIMUK\Auth\Remote\Tests\Fixtures\MockJsonResponse;
+use VATSIMUK\Support\Auth\GraphQL\Builder as PackageBuilder;
+use VATSIMUK\Support\Auth\GraphQL\Response as PackageResponse;
+use VATSIMUK\Support\Auth\Tests\Fixtures\MockJsonResponse;
 
 class ResponseClassTest extends TestCase
 {

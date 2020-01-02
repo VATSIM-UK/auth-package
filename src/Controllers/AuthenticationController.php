@@ -1,6 +1,6 @@
 <?php
 
-namespace VATSIMUK\Auth\Remote\Controllers;
+namespace VATSIMUK\Support\Auth\Controllers;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
@@ -9,11 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\Signer\Key;
-use VATSIMUK\Auth\Remote\Auth\UKAuthJwtService;
-use VATSIMUK\Auth\Remote\Models\RemoteUser;
+use VATSIMUK\Support\Auth\Models\RemoteUser;
+use VATSIMUK\Support\Auth\Services\JWTService;
 
 class AuthenticationController extends Controller
 {
@@ -58,7 +55,7 @@ class AuthenticationController extends Controller
         ], 'all_permissions']);
         $expires = Carbon::now()->addSeconds($response['expires_in'])->getTimestamp();
 
-        $token = UKAuthJwtService::createToken($user, $expires, $response['access_token']);
+        $token = JWTService::createToken($user, $expires, $response['access_token']);
 
 
         return redirect(url('/auth/complete') . "?token=$token&expires_at=$expires")

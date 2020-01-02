@@ -1,6 +1,8 @@
 <?php
 
-namespace VATSIMUK\Auth\Remote\Models\Concerns;
+namespace VATSIMUK\Support\Auth\Models\Concerns;
+
+use Illuminate\Support\Collection;
 
 trait HasRatings
 {

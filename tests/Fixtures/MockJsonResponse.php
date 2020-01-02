@@ -1,6 +1,6 @@
 <?php
 
-namespace VATSIMUK\Auth\Remote\Tests\Fixtures;
+namespace VATSIMUK\Support\Auth\Tests\Fixtures;
 
 class MockJsonResponse
 {
