@@ -49,5 +49,17 @@ class UKAuthServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/ukauth.php' => config_path('ukauth.php'),
         ], 'vatsimuk-auth-package');
+
+        $this->registerRelationshipMacros();
+    }
+
+    private function registerRelationshipMacros()
+    {
+        $containsFunction = function ($related){
+            return $this->wherePivot($this->relatedPivotKey, is_object($related) ? $related->getKey() : $related)->exists();
+        };
+
+        BelongsToMany::macro('contains', $containsFunction);
+        HasMany::macro('contains', $containsFunction);
     }
 }

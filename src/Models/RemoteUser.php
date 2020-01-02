@@ -13,7 +13,6 @@ class RemoteUser extends RemoteModel implements Authenticatable
 {
     use HasRatings;
 
-    protected static $unguarded = true;
     protected static $singleMethod = "user";
     protected static $manyMethod = "users";
 
@@ -22,23 +21,49 @@ class RemoteUser extends RemoteModel implements Authenticatable
         "name_last",
     ];
 
-    public static function findWithAccessToken($token, $columns = null)
+    /**
+     * Finds the user by their Auth API Access Token
+     *
+     * @param string $token
+     * @param array $columns
+     * @return RemoteUser
+     * @throws BindingResolutionException
+     * @throws APITokenInvalidException
+     */
+    public static function findWithAccessToken(string $token, array $columns = null): ?self
     {
         $query = new Builder('authUser', static::generateParams($columns));
         $response = $query->execute($token);
-        return !$response->isEmpty() ? static::initModelWithData($response->getResults()) : null;
+
+        return ! $response->isEmpty() ? static::initModelWithData($response->getResults()) : null;
     }
 
-    public function fresh($columns = null)
+    /**
+     * @param array|null $columns
+     * @param string|null $token
+     * @return static|null
+     * @throws BindingResolutionException
+     * @throws APITokenInvalidException
+     */
+    public function fresh($columns = [], string $token = null)
     {
-        if($this->auth_token){
-            return static::findWithAccessToken($this->auth_token, $columns);
+        if ($this->access_token) {
+            return static::findWithAccessToken($this->access_token, $columns);
         }
-        return parent::fresh($columns);
+
+        return parent::fresh($columns, $token);
     }
-    
-    public function getNameAttribute()
+
+    /**
+     * Gets the user's full name
+     *
+     * @return string|null
+     */
+    public function getNameAttribute(): ?string
     {
+        if (! $this->name_first && ! $this->name_last) {
+            return $this->id;
+        }
         return "{$this->name_first} {$this->name_last}";
     }
 
@@ -47,7 +72,7 @@ class RemoteUser extends RemoteModel implements Authenticatable
      *
      * @return string
      */
-    public function getAuthIdentifierName()
+    public function getAuthIdentifierName(): string
     {
         return "id";
     }
@@ -67,7 +92,7 @@ class RemoteUser extends RemoteModel implements Authenticatable
      *
      * @return string
      */
-    public function getAuthPassword()
+    public function getAuthPassword(): string
     {
         return $this->password;
     }
@@ -77,7 +102,7 @@ class RemoteUser extends RemoteModel implements Authenticatable
      *
      * @return string
      */
-    public function getRememberToken()
+    public function getRememberToken(): string
     {
         return null;
     }
@@ -90,7 +115,7 @@ class RemoteUser extends RemoteModel implements Authenticatable
      */
     public function setRememberToken($value)
     {
-        return null;
+        return;
     }
 
     /**
@@ -98,7 +123,7 @@ class RemoteUser extends RemoteModel implements Authenticatable
      *
      * @return string
      */
-    public function getRememberTokenName()
+    public function getRememberTokenName(): string
     {
         return "remember_token";
     }
