@@ -5,6 +5,7 @@ namespace VATSIMUK\Support\Auth\Models;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Collection;
 use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
 use VATSIMUK\Support\Auth\GraphQL\Builder;
 use VATSIMUK\Support\Auth\Models\Concerns\HasRatings;
@@ -26,22 +27,22 @@ class RemoteUser extends RemoteModel implements Authenticatable
      *
      * @param string $token
      * @param array $columns
-     * @return RemoteUser
+     * @return Collection|RemoteModel|RemoteUser|null
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */
-    public static function findWithAccessToken(string $token, array $columns = null): ?self
+    public static function findWithAccessToken(string $token, array $columns = null)
     {
         $query = new Builder('authUser', static::generateParams($columns));
         $response = $query->execute($token);
 
-        return ! $response->isEmpty() ? static::initModelWithData($response->getResults()) : null;
+        return $response->getHydratedResults(self::class);
     }
 
     /**
      * @param array|null $columns
      * @param string|null $token
-     * @return static|null
+     * @return RemoteModel|null
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */

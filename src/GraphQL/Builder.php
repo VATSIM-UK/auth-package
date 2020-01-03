@@ -6,7 +6,9 @@ namespace VATSIMUK\Support\Auth\GraphQL;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
 
 class Builder
@@ -81,7 +83,7 @@ class Builder
         }
 
 
-        if (! $response || !$response instanceOf \stdClass) {
+        if (! $response || ! $response instanceOf \stdClass) {
             return Response::newServerErrorResponse($this, "Unable to parse API response", $response);
         }
 
@@ -181,10 +183,27 @@ class Builder
     private function buildColumns(array $rawColumns): string
     {
         $columnString = '';
+
+        foreach ($rawColumns as $key => $column) {
+            if(is_string($column)){
+                if (Str::contains($column, ".")) {
+                    data_fill($rawColumns, $column, Arr::last(explode('.', $column)));
+                    unset($rawColumns[$key]);
+                }else{
+                    // Look for duplicates strings in the 1st Dimension of the columns array. Other duplicates caught later.
+                    if(count(array_keys(array_filter($rawColumns, function($value){
+                            return !is_array($value);
+                        }), $column)) > 1){
+                        unset($rawColumns[$key]);
+                    }
+                }
+            }
+        }
+
         foreach ($rawColumns as $key => $column) {
             if (is_array($column)) {
                 $columnString .= "$key {\n";
-                $columnString .= $this->buildColumns($column);
+                $columnString .= $this->buildColumns(array_unique($column));
                 $columnString .= "}\n";
             } else {
                 $columnString .= "$column\n";

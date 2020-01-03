@@ -1,11 +1,12 @@
 <?php
 
 
-namespace VATSIMUK\Support\Auth\Tests;
+namespace VATSIMUK\Support\Auth\Tests\Services;
 
 use Carbon\Carbon;
 use VATSIMUK\Support\Auth\Services\JWTService;
 use VATSIMUK\Support\Auth\Models\RemoteUser;
+use VATSIMUK\Support\Auth\Tests\TestCase;
 
 class JwtServiceTest extends TestCase
 {

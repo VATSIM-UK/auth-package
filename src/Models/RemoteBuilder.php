@@ -11,6 +11,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
 use VATSIMUK\Support\Auth\GraphQL\Builder as GraphQLBuilder;
+use VATSIMUK\Support\Auth\GraphQL\Response;
 
 /*
  * This builder replaces the eloquent query builder for remote models. It is called when doing RemoteModel::get(), etc.
@@ -19,12 +20,32 @@ use VATSIMUK\Support\Auth\GraphQL\Builder as GraphQLBuilder;
 class RemoteBuilder extends Builder
 {
     /**
+     * Whether or not to return the model(s) or the response object
+     *
+     * @var bool
+     */
+    private $returnResponse = false;
+
+    /**
      * The model being queried.
      *
      * @var RemoteModel
      */
     protected $model;
+
+    /**
+     * Optional API call token
+     *
+     * @var string|null
+     */
     private $token;
+
+    /**
+     * Columns to add to the query (in addition to those specified in the find/get function)
+     *
+     * @var array
+     */
+    private $queryColumns = [];
 
     /**
      * RemoteBuilder constructor.
@@ -39,10 +60,38 @@ class RemoteBuilder extends Builder
     }
 
     /**
+     * Makes the outcome of the query a Response object instead of a model
+     * Can be chained, e.g. RemoteModel::returnResponse->find(1)
+     *
+     * @return RemoteBuilder
+     */
+    public function returnResponse(): self
+    {
+        $this->returnResponse = true;
+        return $this;
+    }
+
+    /**
+     * Adds in columns to be retrieved in the API call in addition to manually specified ones.
+     * Mostly used for scoping on the model.
+     * Can be chained, e.g. RemoteModel::withColumns(["atcRating.code"])->find(1)
+     *
+     * @param array $columns
+     * @return RemoteBuilder
+     */
+    public function withColumns(array $columns): self
+    {
+        $this->queryColumns = array_merge($this->queryColumns, $columns);
+        return $this;
+    }
+
+    /**
      * Parses built query, and performs query
      *
      * @param array $columns
      * @return Collection
+     * @throws APITokenInvalidException
+     * @throws BindingResolutionException
      */
     public function get($columns = ['*']): Collection
     {
@@ -68,7 +117,7 @@ class RemoteBuilder extends Builder
             $columns = $this->query->columns;
         }
 
-        return $this->model::findMany($ids, $columns, $this->token);
+        return $this->findMany($ids, $columns, $this->token);
     }
 
 
@@ -78,7 +127,7 @@ class RemoteBuilder extends Builder
      * @param mixed $id
      * @param array|null $columns
      * @param string|null $token Optional Auth API token for the request
-     * @return RemoteModel|Collection|null
+     * @return RemoteModel|Collection|Response|null
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */
@@ -96,7 +145,11 @@ class RemoteBuilder extends Builder
 
         $response = $query->execute($token);
 
-        return ! $response->isEmpty() ? $this->model::initModelWithData($response->getResults()) : null;
+        if($this->returnResponse){
+            return $response;
+        }
+
+        return $response->getHydratedResults($this->model);
     }
 
 
@@ -106,31 +159,28 @@ class RemoteBuilder extends Builder
      * @param Arrayable|array $ids
      * @param array $columns
      * @param string|null $token Optional Auth API token for the request
-     * @return Collection
+     * @return Collection|Response
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */
-    public function findMany($ids, $columns = [], string $token = null): Collection
+    public function findMany($ids, $columns = [], string $token = null)
     {
         $argument = "ids:" . json_encode($ids);
 
         $query = new GraphQLBuilder(
             $this->model->getMultipleAPIMethod(),
-            static::generateParams($columns),
+            $this->generateParams($columns),
             $argument
         );
 
         $response = $query->execute($token);
 
-        $collection = new Collection();
-        if ($response->isEmpty()) {
-            return $collection;
+
+        if($this->returnResponse){
+            return $response;
         }
 
-        foreach ($response->getResults() as $model) {
-            $collection->push($this->model::initModelWithData($model));
-        }
-        return $collection;
+        return $response->getHydratedResults($this->model) ?? collect();
     }
 
     /**
@@ -163,13 +213,20 @@ class RemoteBuilder extends Builder
             $columns = null;
         }
 
+        if(count($this->queryColumns) > 0){
+            $columns = $columns ? array_merge($columns, $this->queryColumns) : $this->queryColumns;
+        }
+
         if ($columns) {
             $columns = array_filter($columns, function ($item) {
                 return ! is_null($item) && $item != '';
             });
         }
 
-        return array_unique(array_merge(['id'], ! empty($columns) ? $columns : $this->model->getDefaultFields()), SORT_REGULAR);
+        return array_unique(
+            array_merge(
+                ['id'], ! empty($columns) ? $columns : $this->model->getDefaultFields()
+            ), SORT_REGULAR);
     }
 
 

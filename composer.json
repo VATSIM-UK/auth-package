@@ -5,6 +5,12 @@
     "license": "MIT",
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "authors": [
+        {
+            "name": "Alex Toff",
+            "homepage": "https://github.com/atoff"
+        }
+    ],
     "require": {
         "php": "^7.2",
         "ext-json": "*",
@@ -23,7 +29,10 @@
     "autoload": {
         "psr-4": {
             "VATSIMUK\\Support\\Auth\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

@@ -16,15 +16,72 @@ abstract class RemoteModel extends Model
     protected static $singleMethod;
     protected static $manyMethod;
     protected static $defaultFields = [];
-    protected $relationshipBuilder = false;
     public $exists = true;
+    protected $relationshipBuilder = false;
+
+    /**
+     * Like doing "loadMissing" for eloquent relationships, but eager loads missing attributes on the model
+     * Should be a 1D array. For relationships, use "dot" notation (e.g. relationship.name)
+     *
+     * @param String[] $attributes
+     * @param string|null $token Optional API token, otherwise machine-machine will be used
+     * @return RemoteModel
+     * @throws APITokenInvalidException
+     * @throws BindingResolutionException
+     */
+    public function loadMissingAttributes(array $attributes, string $token = null): RemoteModel
+    {
+        // Convert all arrays into dot notation
+        $attributes = collect($attributes)->map(function ($attribute, $key) {
+            if (is_array($attribute)) {
+                return array_to_dot([$key => $attribute]);
+            }
+            return $attribute;
+        })->flatten();
+
+        // Remove attributes that have already been loaded
+        $attributes = $attributes->reject(function ($attribute) {
+            if (data_has($this->attributes, $attribute)) {
+                return true;
+            }
+            return false;
+        })->each(function ($attribute) {
+            // Preset the value to ensure no infinite loop if API unavailable
+            data_set($this->attributes, $attribute, null);
+        });
+
+        $fetchedModel = $this->newQueryWithoutScopes()->find($this->getKey(), $attributes->all(), $token);
+        if (! $fetchedModel) {
+            return $this;
+        }
+
+        $this->attributes = array_merge($this->attributes, $fetchedModel->attributes);
+        return $this;
+    }
+
+    /**
+     * Returns, or fetches if not set, the attribute for the model
+     *
+     * @param string $attribute
+     * @param string|null $token Optional API token, otherwise machine-machine will be used
+     * @return mixed
+     * @throws APITokenInvalidException
+     * @throws BindingResolutionException
+     */
+    public function attribute(string $attribute, string $token = null)
+    {
+        if (! data_get($this, $attribute)) {
+            $this->loadMissingAttributes([$attribute], $token);
+        }
+        return data_get($this, $attribute);
+    }
 
     /**
      * Retrieve an updated model instance from the Auth API
      *
      * @param array|null $columns
      * @param string|null $token Optional Auth API token for the request
-     * @return static|null
+     * @return RemoteModel|null
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */
@@ -50,10 +107,6 @@ abstract class RemoteModel extends Model
      */
     public function newEloquentBuilder($query): RemoteBuilder
     {
-        if ($this->access_token) {
-            return $this->relationshipBuilder ? new RemoteRelationshipBuilder($query, $this->access_token) : new RemoteBuilder($query, $this->access_token);
-        }
-
         return $this->relationshipBuilder ? new RemoteRelationshipBuilder($query) : new RemoteBuilder($query);
     }
 
@@ -63,13 +116,10 @@ abstract class RemoteModel extends Model
      * @param $data
      * @return self
      */
-    public static function initModelWithData($data): self
+    public static function initModelWithData($data)
     {
-        $model = new static();
-
-        return $model->fill((array)$data);
+        return resolve(static::class)->newInstance((array) $data);
     }
-
 
     /**
      * Get the API method for fetching a single model

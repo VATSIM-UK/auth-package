@@ -3,6 +3,8 @@
 namespace VATSIMUK\Support\Auth\Models\Concerns;
 
 use Illuminate\Support\Collection;
+use stdClass;
+use VATSIMUK\Support\Auth\Models\RemoteBuilder;
 
 trait HasRatings
 {
@@ -22,32 +24,35 @@ trait HasRatings
         'vatsim_id'
     ];
 
+    public function scopeWithRatings(RemoteBuilder $query)
+    {
+        return $query->withColumns([
+            ['atcRating' => $this->RATINGS_SCHEMA],
+            ['pilotRating' => $this->RATINGS_SCHEMA]
+        ]);
+    }
+
     /**
      * Request the data for the ATC rating of the RemoteUser.
      *
-     * @return mixed
+     * @return stdClass
      */
     public function getATCRatingAttribute()
-    {   
-        return isset($this->attributes['atcRating']) ?
-            $this->attributes['atcRating'] :
-            $this->attributes['atcRating'] = static::find($this->id, ['atcRating' => $this->RATINGS_SCHEMA])
-                ->attributes['atcRating'];
+    {
+        return (object) $this->loadMissingAttributes(['atcRating' => $this->RATINGS_SCHEMA])->attributes['atcRating'];
     }
 
     /**
      * Request the data for the Pilot rating(s) of the RemoteUser.
      *
-     * @return Collection |null
+     * @return Collection|null
      */
     public function getPilotRatingsAttribute()
     {
-        if(isset($this->attributes['pilotRatings'])){
-            return $this->attributes['pilotRatings'];
-        }
+        $ratings = $this->loadMissingAttributes(['pilotRatings' => $this->RATINGS_SCHEMA])->attributes['pilotRatings'];
 
-        $ratings = static::find($this->id, ['pilotRatings' => $this->RATINGS_SCHEMA])->attributes['pilotRatings'];
-
-        return $ratings ? collect($ratings) : null;
+        return $ratings ? collect($ratings)->map(function ($rating){
+            return (object) $rating;
+        }) : null;
     }
 }

@@ -53,7 +53,7 @@ public function user() {
 }
 ```
 
-> **Important**: You must use the `HasRemoteRelationships` trait included with the package in the model with the relationship to ensure that mocking and other functions operate as intended.
+> **Important**: You must use the `HasRemoteRelationships` trait included with the package in the model with the relationship to ensure that mocking, API offline handling and other functions operate as intended.
 
 
    

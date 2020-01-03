@@ -6,10 +6,8 @@ namespace VATSIMUK\Support\Auth\Models\Relationships;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
 use VATSIMUK\Support\Auth\Models\RemoteBuilder;
 use VATSIMUK\Support\Auth\Models\RemoteModel;
@@ -31,7 +29,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     {
         // If we get null back from a relationship we are pretty sure exists (i.e. is in database), we will just return
         // the primary key
-        return parent::find($id, $columns, $token) ?? (!$checkAPI ? $this->model::initModelWithData([
+        return parent::find($id, $columns, $token) ?? (! $checkAPI ? $this->model::initModelWithData([
                 $this->model->getKeyName() => $id
             ]) : null);
     }
@@ -127,27 +125,32 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     {
         $details = $this->findRelationshipDetails();
 
-        if(!$details->table){
+        if (! $details->table) {
             // Likely a one-to-one relationship. As long as an id is given, it is true
-            if(($key = $this->query->wheres[0]['value']) == null){
+            if (($key = $this->query->wheres[0]['value']) == null) {
                 return false;
             }
             return $checkAPI ? $this->find($key, ['id'], null, true) != null : true;
         }
 
-        if($details){
-//            dd($this->query);
+        if ($details) {
             $this->query->joins = null;
             $this->query->from = $details->table;
 
             $existsInPivot = $this->query->count() > 0;
 
 
-            if(!$existsInPivot){
+            if (! $existsInPivot) {
                 return false;
             }
 
-            return $checkAPI ? $this->find($this->getValueForWhereColumn("{$details->table}.{$details->relatedPivotKey}"), ['id'], null, true) != null : true;
+            if (! $checkAPI) {
+                return true;
+            }
+
+            //TODO: If the API is down, find will return null. We should give benefit of the doubt in this case.
+
+            return $this->find($this->getValueForWhereColumn("{$details->table}.{$details->relatedPivotKey}"), ['id'], null, true) != null;
         }
 
         return parent::exists();
@@ -166,7 +169,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
         }
 
         if (count($this->query->wheres) > 0) {
-            return (object) [
+            return (object)[
                 'table' => $this->determinePivotTable(),
                 'foreignPivotKey' => $this->determineForeignPivotKeyName(),
                 'parentKey' => $this->determineParentModelKey(),
@@ -187,7 +190,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     {
         $exploded = explode('.', $columnWithTable);
 
-        if($exploded[0] == $this->determinePivotTable()){
+        if ($exploded[0] == $this->determinePivotTable()) {
             unset($exploded[0]);
         }
 
@@ -226,7 +229,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
      */
     private function determineRelatedPivotKeyName(): ?string
     {
-        if(!isset($this->query->joins[0]->wheres[0]['second'])){
+        if (! isset($this->query->joins[0]->wheres[0]['second'])) {
             return null;
         }
 
