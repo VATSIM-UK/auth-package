@@ -35,6 +35,14 @@ class RemoteUserTest extends TestCase
         }
     }
 
+    public function testItCanRetrieveByAccessToken()
+    {
+        $this->mockGuzzleClientResponse(new Response(200, [], json_encode(MockJsonResponse::successfulAuthUserResponse())));
+        $user = RemoteUser::findWithAccessToken('eyMyAuthAccessToken');
+
+        $this->assertEquals("5th", $user->name_first);
+    }
+
     public function testItCanLoadMissingAttributes()
     {
         $model = new RemoteUser([

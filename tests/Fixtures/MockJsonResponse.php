@@ -9,9 +9,20 @@ class MockJsonResponse
      *
      * @return mixed
      */
-    public static function successfulResponse()
+    public static function successfulAuthUserResponse()
     {
-        return json_decode('{"data":{"user":{"id":"1300005","name_first":"5th","name_last":"Test","email":"joe.bloggs@example.org"}}}');
+        return json_decode('{"data":{"authUser":{"id":"1300005","name_first":"5th","name_last":"Test","email":"joe.bloggs@example.org"}}}');
+    }
+
+    /**
+     * Represents a successfully retrieved user.
+     *
+     * @param string $method
+     * @return mixed
+     */
+    public static function successfulResponse($method = "user")
+    {
+        return json_decode('{"data":{"'.$method.'":{"id":"1300005","name_first":"5th","name_last":"Test","email":"joe.bloggs@example.org"}}}');
     }
 
     /**
@@ -19,9 +30,9 @@ class MockJsonResponse
      *
      * @return mixed
      */
-    public static function successfulMultipleResponse()
+    public static function successfulMultipleResponse($method = "users")
     {
-        return json_decode('{"data":{"user":[{"id":"1300001","name_first":"1st","name_last":"Test"}, {"id":"1300005","name_first":"5th","name_last":"Test"}]}}');
+        return json_decode('{"data":{"'.$method.'":[{"id":"1300001","name_first":"1st","name_last":"Test"}, {"id":"1300005","name_first":"5th","name_last":"Test"}]}}');
     }
 
     /**

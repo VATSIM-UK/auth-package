@@ -3,16 +3,15 @@
 
 namespace VATSIMUK\Support\Auth\Models;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Collection;
 use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
 use VATSIMUK\Support\Auth\GraphQL\Builder;
 use VATSIMUK\Support\Auth\Models\Concerns\HasRatings;
 
-class RemoteUser extends RemoteModel implements Authenticatable
+class RemoteUser extends RemoteModel
 {
-    use HasRatings;
+    use HasRatings, \Illuminate\Auth\Authenticatable;
 
     protected static $singleMethod = "user";
     protected static $manyMethod = "users";
@@ -40,22 +39,6 @@ class RemoteUser extends RemoteModel implements Authenticatable
     }
 
     /**
-     * @param array|null $columns
-     * @param string|null $token
-     * @return RemoteModel|null
-     * @throws BindingResolutionException
-     * @throws APITokenInvalidException
-     */
-    public function fresh($columns = [], string $token = null)
-    {
-        if ($this->access_token) {
-            return static::findWithAccessToken($this->access_token, $columns);
-        }
-
-        return parent::fresh($columns, $token);
-    }
-
-    /**
      * Gets the user's full name
      *
      * @return string|null
@@ -66,66 +49,5 @@ class RemoteUser extends RemoteModel implements Authenticatable
             return $this->id;
         }
         return "{$this->name_first} {$this->name_last}";
-    }
-
-    /**
-     * Get the name of the unique identifier for the user.
-     *
-     * @return string
-     */
-    public function getAuthIdentifierName(): string
-    {
-        return "id";
-    }
-
-    /**
-     * Get the unique identifier for the user.
-     *
-     * @return mixed
-     */
-    public function getAuthIdentifier()
-    {
-        return $this->{$this->getAuthIdentifierName()};
-    }
-
-    /**
-     * Get the password for the user.
-     *
-     * @return string
-     */
-    public function getAuthPassword(): string
-    {
-        return $this->password;
-    }
-
-    /**
-     * Get the token value for the "remember me" session.
-     *
-     * @return string
-     */
-    public function getRememberToken(): string
-    {
-        return null;
-    }
-
-    /**
-     * Set the token value for the "remember me" session.
-     *
-     * @param string $value
-     * @return void
-     */
-    public function setRememberToken($value)
-    {
-        return;
-    }
-
-    /**
-     * Get the column name for the "remember me" token.
-     *
-     * @return string
-     */
-    public function getRememberTokenName(): string
-    {
-        return "remember_token";
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
 use VATSIMUK\Support\Auth\GraphQL\Builder as GraphQLBuilder;
 use VATSIMUK\Support\Auth\GraphQL\Response;
@@ -143,7 +144,7 @@ class RemoteBuilder extends Builder
             "id:$id"
         );
 
-        $response = $query->execute($token);
+        $response = $query->execute($token ?? $this->token);
 
         if($this->returnResponse){
             return $response;
@@ -173,8 +174,7 @@ class RemoteBuilder extends Builder
             $argument
         );
 
-        $response = $query->execute($token);
-
+        $response = $query->execute($token ?? $this->token);
 
         if($this->returnResponse){
             return $response;
@@ -238,6 +238,14 @@ class RemoteBuilder extends Builder
      */
     private function getColumnNameWithoutTable(string $column): string
     {
-        return explode('.', $column)[1];
+        return Str::contains($column, '.') ? explode('.', $column)[1] : $column;
+    }
+
+    /**
+     * @param string|null $token
+     */
+    public function setToken(?string $token): void
+    {
+        $this->token = $token;
     }
 }

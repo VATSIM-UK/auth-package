@@ -17,15 +17,17 @@ class ResponseTest extends TestCase
     protected $erroredResponse;
     protected $emptyDataResponse;
     protected $unauthenticatedResponse;
+    private $multiBuilder;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->builder = new PackageBuilder('user', ["name_first", "name_last",]);
+        $this->multiBuilder = new PackageBuilder('users', ["name_first", "name_last",]);
         $this->erroredResponse = new PackageResponse(MockJsonResponse::erroredResponse(), $this->builder);
         $this->normalResponse = new PackageResponse(MockJsonResponse::successfulResponse(), $this->builder);
-        $this->normalMultipleResponse = new PackageResponse(MockJsonResponse::successfulMultipleResponse(), $this->builder);
+        $this->normalMultipleResponse = new PackageResponse(MockJsonResponse::successfulMultipleResponse(), $this->multiBuilder);
         $this->emptyDataResponse = new PackageResponse(MockJsonResponse::emptyResponse(), $this->builder);
         $this->unauthenticatedResponse = new PackageResponse(MockJsonResponse::unauthenticatedResponse(), $this->builder);
     }

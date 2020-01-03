@@ -4,6 +4,7 @@
 namespace VATSIMUK\Support\Auth\Models;
 
 
+use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -18,6 +19,20 @@ abstract class RemoteModel extends Model
     protected static $defaultFields = [];
     public $exists = true;
     protected $relationshipBuilder = false;
+
+    public function __construct(array $attributes = [])
+    {
+        if ( !isset(static::$singleMethod))
+        {
+            throw new Exception('RemoteModels must define the $singleMethod property');
+        }
+        if ( !isset(static::$manyMethod))
+        {
+            throw new Exception('RemoteModels must define the $manyMethod property');
+        }
+
+        parent::__construct($attributes);
+    }
 
     /**
      * Like doing "loadMissing" for eloquent relationships, but eager loads missing attributes on the model
