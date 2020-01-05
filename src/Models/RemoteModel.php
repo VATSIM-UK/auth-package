@@ -44,7 +44,7 @@ abstract class RemoteModel extends Model
      * @throws APITokenInvalidException
      * @throws BindingResolutionException
      */
-    public function loadMissingAttributes(array $attributes, string $token = null): RemoteModel
+    public function loadMissingAttributes(array $attributes, string $token = null, $nullAsArray = false): RemoteModel
     {
         // Convert all arrays into dot notation
         $attributes = collect($attributes)->map(function ($attribute, $key) {
@@ -60,12 +60,17 @@ abstract class RemoteModel extends Model
                 return true;
             }
             return false;
-        })->each(function ($attribute) {
+        })->each(function ($attribute) use ($nullAsArray) {
             // Preset the value to ensure no infinite loop if API unavailable
+            if($nullAsArray){
+                data_set($this->attributes, explode('.', $attribute)[0], null);
+                return;
+            }
             data_set($this->attributes, $attribute, null);
         });
 
         $fetchedModel = $this->newQueryWithoutScopes()->find($this->getKey(), $attributes->all(), $token);
+
         if (! $fetchedModel) {
             return $this;
         }

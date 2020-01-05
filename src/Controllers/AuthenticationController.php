@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use VATSIMUK\Support\Auth\Models\RemoteUser;
 use VATSIMUK\Support\Auth\Services\JWTService;
@@ -28,6 +29,14 @@ class AuthenticationController extends Controller
 
     public function verifyLogin(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'code' => 'required'
+        ]);
+
+        if($validator->fails()){
+            return redirect(route('auth.login'));
+        }
+
         $http = new Client();
         try {
             $response = $http->post(config('ukauth.root_url') . config('ukauth.oauth_path') . '/token', [
@@ -42,7 +51,7 @@ class AuthenticationController extends Controller
         } catch (ClientException $e) {
             if ($e->getCode() == 400 && Str::contains($e->getMessage(), 'invalid_request')) {
                 Log::info("User at {$request->ip()} tried to verify their Auth SSO login, however the details were invalid", ["exception" => $e]);
-                return $this->login($request);
+                return redirect(route('auth.login'));
             }
             throw $e;
         }

@@ -14,7 +14,7 @@ trait HasRatings
      * @uses VATSIM-UK/auth/graphql/schema.graphql - type Rating
      * @var array
      */
-    private $RATINGS_SCHEMA = [
+    static $RATINGS_SCHEMA = [
         'id',
         'type',
         'code',
@@ -27,8 +27,8 @@ trait HasRatings
     public function scopeWithRatings(RemoteBuilder $query)
     {
         return $query->withColumns([
-            ['atcRating' => $this->RATINGS_SCHEMA],
-            ['pilotRating' => $this->RATINGS_SCHEMA]
+            ['atcRating' => self::$RATINGS_SCHEMA],
+            ['pilotRatings' => self::$RATINGS_SCHEMA]
         ]);
     }
 
@@ -39,7 +39,7 @@ trait HasRatings
      */
     public function getATCRatingAttribute()
     {
-        return (object) $this->loadMissingAttributes(['atcRating' => $this->RATINGS_SCHEMA])->attributes['atcRating'];
+        return (object) $this->loadMissingAttributes(['atcRating' => self::$RATINGS_SCHEMA])->attributes['atcRating'];
     }
 
     /**
@@ -49,7 +49,7 @@ trait HasRatings
      */
     public function getPilotRatingsAttribute()
     {
-        $ratings = $this->loadMissingAttributes(['pilotRatings' => $this->RATINGS_SCHEMA])->attributes['pilotRatings'];
+        $ratings = $this->loadMissingAttributes(['pilotRatings' => self::$RATINGS_SCHEMA], null, true)->attributes['pilotRatings'];
 
         return $ratings ? collect($ratings)->map(function ($rating){
             return (object) $rating;

@@ -3,6 +3,8 @@
 
 namespace VATSIMUK\Support\Auth\Tests\Models;
 
+use Faker\Provider\Base;
+use Faker\Provider\en_US\Text;
 use GuzzleHttp\Psr7\Response;
 use Mockery\MockInterface;
 use VATSIMUK\Support\Auth\Models\RemoteBuilder;
@@ -154,5 +156,27 @@ class RemoteUserTest extends TestCase
         $model = new RemoteUser();
         $this->assertEquals('user', $model->getSingleAPIMethod());
         $this->assertEquals('users', $model->getMultipleAPIMethod());
+    }
+
+    public function testWithRatingsScope()
+    {
+        $builder = (new RemoteUser())->withRatings();
+        
+        $this->assertEquals(RemoteUser::$RATINGS_SCHEMA, $builder->generateParams()[1]['atcRating']);
+        $this->assertEquals(RemoteUser::$RATINGS_SCHEMA, $builder->generateParams()[2]['pilotRatings']);
+    }
+
+    public function testItCanRetrieveRatingsLazyLoaded()
+    {
+        $user = new RemoteUser();
+        $this->assertEmpty($user->attributesToArray());
+
+        $this->assertNull($user->pilotRatings);
+        $this->assertNotEmpty($user->attributesToArray());
+
+
+        $user = new RemoteUser();
+        $this->assertNull($user->atcRating->code);
+        $this->assertNotEmpty($user->attributesToArray());
     }
 }

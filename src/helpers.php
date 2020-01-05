@@ -62,15 +62,14 @@ if (! function_exists('array_to_dot')) {
     {
         $dotted = collect(Arr::dot($array));
 
-        return $dotted->mapWithKeys(function ($value, $key) {
+        return $dotted->map(function ($value, $key) {
             $exploded = explode('.', $key);
-            $newKey = Arr::last($exploded);
             array_pop($exploded);
             $exploded[] = $value;
             $newValue = implode(".", $exploded);
 
-            return [$newKey => $newValue];
-        });
+            return $newValue;
+        })->sort()->values();
 
     }
 }
