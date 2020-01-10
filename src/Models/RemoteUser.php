@@ -1,18 +1,21 @@
 <?php
 
 
-namespace VATSIMUK\Auth\Remote\Models;
+namespace VATSIMUK\Support\Auth\Models;
 
-use Illuminate\Contracts\Auth\Authenticatable;
-use VATSIMUK\Auth\Remote\GraphQL\Builder;
-use VATSIMUK\Auth\Remote\Models\Concerns\HasRatings;
-use VATSIMUK\Auth\Remote\RemoteModel;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Support\Collection;
+use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
+use VATSIMUK\Support\Auth\GraphQL\Builder;
+use VATSIMUK\Support\Auth\Models\Concerns\HasPermissions;
+use VATSIMUK\Support\Auth\Models\Concerns\HasRatings;
 
-class RemoteUser extends RemoteModel implements Authenticatable
+class RemoteUser extends RemoteModel
 {
-    use HasRatings;
+    use HasRatings, Authenticatable, HasPermissions, Authorizable;
 
-    protected static $unguarded = true;
     protected static $singleMethod = "user";
     protected static $manyMethod = "users";
 
@@ -21,79 +24,33 @@ class RemoteUser extends RemoteModel implements Authenticatable
         "name_last",
     ];
 
-    public static function findWithAccessToken($token, $columns = null)
+    /**
+     * Finds the user by their Auth API Access Token
+     *
+     * @param string $token
+     * @param array $columns
+     * @return Collection|RemoteModel|RemoteUser|null
+     * @throws BindingResolutionException
+     * @throws APITokenInvalidException
+     */
+    public static function findWithAccessToken(string $token, array $columns = null)
     {
         $query = new Builder('authUser', static::generateParams($columns));
         $response = $query->execute($token);
-        return !$response->isEmpty() ? static::initModelWithData($response->getResults()) : null;
+
+        return $response->getHydratedResults(self::class);
     }
 
-    public function fresh($columns = null)
+    /**
+     * Gets the user's full name
+     *
+     * @return string|null
+     */
+    public function getNameAttribute(): ?string
     {
-        if($this->auth_token){
-            return static::findWithAccessToken($this->auth_token, $columns);
+        if (! $this->name_first && ! $this->name_last) {
+            return $this->id;
         }
-        return parent::fresh($columns);
-    }
-
-    /**
-     * Get the name of the unique identifier for the user.
-     *
-     * @return string
-     */
-    public function getAuthIdentifierName()
-    {
-        return "id";
-    }
-
-    /**
-     * Get the unique identifier for the user.
-     *
-     * @return mixed
-     */
-    public function getAuthIdentifier()
-    {
-        return $this->{$this->getAuthIdentifierName()};
-    }
-
-    /**
-     * Get the password for the user.
-     *
-     * @return string
-     */
-    public function getAuthPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Get the token value for the "remember me" session.
-     *
-     * @return string
-     */
-    public function getRememberToken()
-    {
-        return null;
-    }
-
-    /**
-     * Set the token value for the "remember me" session.
-     *
-     * @param string $value
-     * @return void
-     */
-    public function setRememberToken($value)
-    {
-        return null;
-    }
-
-    /**
-     * Get the column name for the "remember me" token.
-     *
-     * @return string
-     */
-    public function getRememberTokenName()
-    {
-        return "remember_token";
+        return "{$this->name_first} {$this->name_last}";
     }
 }

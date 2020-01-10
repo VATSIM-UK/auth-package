@@ -1,12 +1,11 @@
 <?php
 
 
-namespace VATSIMUK\Auth\Remote\Auth;
-
+namespace VATSIMUK\Support\Auth\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
-use VATSIMUK\Auth\Remote\Models\RemoteUser;
+use VATSIMUK\Support\Auth\Models\RemoteUser;
 
 class UKAuthUserProvider implements UserProvider
 {

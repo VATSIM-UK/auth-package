@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'auth_user_model' => VATSIMUK\Auth\Remote\Models\RemoteUser::class,
+    'auth_user_model' => VATSIMUK\Support\AuthModels\RemoteUser::class,
 
     /*
     |--------------------------------------------------------------------------
