@@ -3,15 +3,18 @@
 
 namespace VATSIMUK\Support\Auth\Models;
 
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Collection;
 use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
 use VATSIMUK\Support\Auth\GraphQL\Builder;
+use VATSIMUK\Support\Auth\Models\Concerns\HasPermissions;
 use VATSIMUK\Support\Auth\Models\Concerns\HasRatings;
 
 class RemoteUser extends RemoteModel
 {
-    use HasRatings, \Illuminate\Auth\Authenticatable;
+    use HasRatings, Authenticatable, HasPermissions, Authorizable;
 
     protected static $singleMethod = "user";
     protected static $manyMethod = "users";

@@ -3,10 +3,7 @@
 
 namespace VATSIMUK\Support\Auth\Tests\Models;
 
-use Faker\Provider\Base;
-use Faker\Provider\en_US\Text;
 use GuzzleHttp\Psr7\Response;
-use Mockery\MockInterface;
 use VATSIMUK\Support\Auth\Models\RemoteBuilder;
 use VATSIMUK\Support\Auth\Models\RemoteUser;
 use VATSIMUK\Support\Auth\Tests\Fixtures\MockJsonResponse;
@@ -84,10 +81,10 @@ class RemoteUserTest extends TestCase
         $this->mockGuzzleClientThrowRequestException();
 
         $response = $model->loadMissingAttributes([
-                'atcRating' => ['code'],
-                'id',
-                'email'
-            ]);
+            'atcRating' => ['code'],
+            'id',
+            'email'
+        ]);
 
         $this->assertInstanceOf(RemoteUser::class, $response);
         $this->assertEquals(123, $response->id);
@@ -105,7 +102,7 @@ class RemoteUserTest extends TestCase
                 'body' => 'Was Naughty'
             ]
         ]);
-        
+
         $this->assertEquals('Joe', $model->attribute('name_first'));
         $this->assertEquals('Was Naughty', $model->attribute('activeBan.body'));
 
@@ -161,7 +158,7 @@ class RemoteUserTest extends TestCase
     public function testWithRatingsScope()
     {
         $builder = (new RemoteUser())->withRatings();
-        
+
         $this->assertEquals(RemoteUser::$RATINGS_SCHEMA, $builder->generateParams()[1]['atcRating']);
         $this->assertEquals(RemoteUser::$RATINGS_SCHEMA, $builder->generateParams()[2]['pilotRatings']);
     }
@@ -178,5 +175,20 @@ class RemoteUserTest extends TestCase
         $user = new RemoteUser();
         $this->assertNull($user->atcRating->code);
         $this->assertNotEmpty($user->attributesToArray());
+    }
+
+    public function testItCanHavePermissions()
+    {
+        $user = RemoteUser::initModelWithData([
+            'all_permissions' => [
+                'auth.user.create',
+                'auth.bans.*'
+            ]
+        ]);
+
+        $this->assertTrue($user->can('auth.user.create'));
+        $this->assertTrue($user->can('auth.bans.modify.repeal'));
+        $this->assertFalse($user->can('auth.permissions.add'));
+
     }
 }
