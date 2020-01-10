@@ -39,6 +39,7 @@ class PermissionValidityServiceTest extends TestCase
     /** @test */
     public function itIdentifiesIfPermissionIsValid()
     {
+        $this->assertTrue(PermissionValidity::isValidPermission('*'));
         $this->assertTrue(PermissionValidity::isValidPermission('auth.users.create'));
         $this->assertTrue(PermissionValidity::isValidPermission('auth.users.modify.age'));
         $this->assertTrue(PermissionValidity::isValidPermission('auth.permissions.*'));

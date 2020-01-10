@@ -19,6 +19,10 @@ class PermissionValidityService
      */
     public function isValidPermission($permission): bool
     {
+        if($permission == '*'){
+            return true;
+        }
+
         // 1: Remove Wildcards
         $permission = str_replace('.*', '', $permission, $count);
         $permissionSplit = collect(explode('.', $permission));
