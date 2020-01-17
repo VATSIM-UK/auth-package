@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/register": "^7.8.3",
+    "mocha": "^7.0.0",
+    "nyc": "^15.0.0"
+  },
+  "scripts": {
+    "test": "node_modules/nyc/bin/nyc.js node_modules/mocha/bin/mocha --require @babel/register --recursive 'tests/Js'"
+  }
+}

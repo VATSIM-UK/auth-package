@@ -42,6 +42,8 @@ class PermissionValidityService
     /**
      * Check if a permission is satisfied by a given list of permissions.
      *
+     * ***IMPORTANT*** Changes to this function's core logic should also be reflected in src/js/permissionValidity.js
+     *
      * @param string $permission
      * @param Collection|MorphMany|array $permissions
      * @return bool

@@ -1,4 +1,6 @@
 /vendor
 /.idea
 /build
+/.nyc_output
+/node_modules
 .phpunit.result.cache
