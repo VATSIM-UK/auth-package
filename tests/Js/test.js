@@ -9,6 +9,7 @@ var permissionsHas = [
 
 describe('Permission Validity Service Test', function() {
     it('should determine permission met', function() {
+        assert.equal(Service('auth.users.create', ['*']), true);
         assert.equal(Service('auth.users.create', permissionsHas), true);
         assert.equal(Service('auth.users.modify', permissionsHas), true);
         assert.equal(Service('auth.users.*', permissionsHas), true);

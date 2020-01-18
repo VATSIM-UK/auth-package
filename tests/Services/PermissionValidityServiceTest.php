@@ -65,6 +65,7 @@ class PermissionValidityServiceTest extends TestCase
         ];
         // Array Input
         $this->assertTrue(PermissionValidity::permissionSatisfiedByPermissions('auth.users.create', $validPermissions));
+        $this->assertTrue(PermissionValidity::permissionSatisfiedByPermissions('auth.users.create', ['*']));
         $this->assertFalse(PermissionValidity::permissionSatisfiedByPermissions('auth.users.create', $invalidPermissions));
 
         // Collection Input

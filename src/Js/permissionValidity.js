@@ -3,7 +3,7 @@ export default function permissionSatisfied(permission, permissions) {
 
     permissions.forEach(function (item) {
         // Straight match
-        if(item === permission){
+        if(item === permission || item === '*'){
             match = true;
             return true;
         }
