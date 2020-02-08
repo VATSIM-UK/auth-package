@@ -29,7 +29,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     {
         // If we get null back from a relationship we are pretty sure exists (i.e. is in database), we will just return
         // the primary key
-        return parent::find($id, $columns, $token) ?? (! $checkAPI ? $this->model::initModelWithData([
+        return $this->model->find($id, $columns, $token) ?? (! $checkAPI ? $this->model::initModelWithData([
                 $this->model->getKeyName() => $id
             ]) : null);
     }
@@ -46,7 +46,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
      */
     public function findMany($ids, $columns = [], string $token = null): Collection
     {
-        $result = parent::findMany($ids, $columns, $token);
+        $result = $this->model->findMany($ids, $columns, $token);
 
         if (count($ids) < 1) {
             return collect();
