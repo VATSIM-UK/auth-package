@@ -43,10 +43,10 @@ class PermissionValidityServiceTest extends TestCase
         $this->assertTrue(PermissionValidity::isValidPermission('auth.users.create'));
         $this->assertTrue(PermissionValidity::isValidPermission('auth.users.modify.age'));
         $this->assertTrue(PermissionValidity::isValidPermission('auth.permissions.*'));
+        $this->assertTrue(PermissionValidity::isValidPermission('auth.permissions'));
         $this->assertTrue(PermissionValidity::isValidPermission('auth.users.modify.*'));
         $this->assertFalse(PermissionValidity::isValidPermission('auth.permissions*'));
         $this->assertFalse(PermissionValidity::isValidPermission('auth.users.mutate'));
-        $this->assertFalse(PermissionValidity::isValidPermission('auth.users'));
         $this->assertFalse(PermissionValidity::isValidPermission('example.doesnt.exist'));
     }
 
@@ -65,6 +65,7 @@ class PermissionValidityServiceTest extends TestCase
         ];
         // Array Input
         $this->assertTrue(PermissionValidity::permissionSatisfiedByPermissions('auth.users.create', $validPermissions));
+        $this->assertTrue(PermissionValidity::permissionSatisfiedByPermissions('auth.users.create', ['*']));
         $this->assertFalse(PermissionValidity::permissionSatisfiedByPermissions('auth.users.create', $invalidPermissions));
 
         // Collection Input

@@ -9,6 +9,7 @@ before_install:
   - sudo apt-get update
   - composer self-update
   - composer install --prefer-dist --no-interaction --optimize-autoloader --no-suggest
+  - yarn
 
 before_script:
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter; fi
@@ -21,3 +22,4 @@ before_script:
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover build/logs/clover.xml
+  - yarn run test

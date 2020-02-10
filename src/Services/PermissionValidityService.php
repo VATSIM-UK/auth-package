@@ -24,14 +24,14 @@ class PermissionValidityService
         }
 
         // 1: Remove Wildcards
-        $permission = str_replace('.*', '', $permission, $count);
+        $permission = str_replace('.*', '', $permission, $wildcardCount);
         $permissionSplit = collect(explode('.', $permission));
 
         // 2: Load permissions file and parse
         $permissions = $this->loadJsonPermissions();
 
         // 3: Check if the file has the permission
-        return (is_array(data_get($permissions, $permission)) && $count > 0) // If it is a wildcard, the result should be an array
+        return is_array(data_get($permissions, $permission))
             || collect(data_get($permissions, str_replace('.'.$permissionSplit->last(), '', $permission)))
                 ->filter(function ($item) {
                     return ! is_array($item);
@@ -41,6 +41,8 @@ class PermissionValidityService
 
     /**
      * Check if a permission is satisfied by a given list of permissions.
+     *
+     * ***IMPORTANT*** Changes to this function's core logic should also be reflected in src/js/permissionValidity.js
      *
      * @param string $permission
      * @param Collection|MorphMany|array $permissions
