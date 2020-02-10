@@ -5,6 +5,7 @@ namespace VATSIMUK\Support\Auth\Models;
 
 
 use Exception;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -124,10 +125,12 @@ abstract class RemoteModel extends Model
      *
      * @param Builder $query
      * @return RemoteBuilder
+     * @throws BindingResolutionException
      */
     public function newEloquentBuilder($query): RemoteBuilder
     {
-        return $this->relationshipBuilder ? new RemoteRelationshipBuilder($query) : new RemoteBuilder($query);
+        $container = Container::getInstance();
+        return $this->relationshipBuilder ? $container->make(RemoteRelationshipBuilder::class, ['query' => $query]) : new RemoteBuilder($query);
     }
 
     /**
