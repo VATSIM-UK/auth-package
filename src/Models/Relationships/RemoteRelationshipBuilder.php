@@ -105,7 +105,8 @@ class RemoteRelationshipBuilder extends RemoteBuilder
             $pivotAttributes = collect($results->firstWhere($details->relatedPivotKey, $model->getKey()))->mapWithKeys(function ($value, $key) {
                 return ['pivot_' . $key => $value];
             });
-            return $model->setRawAttributes($pivotAttributes->all());
+
+            return $model->setRawAttributes(array_merge($pivotAttributes->all(), $model->getAttributes()));
         });
 
         return $models->all();
