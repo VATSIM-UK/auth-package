@@ -14,7 +14,7 @@ class HelpersTest extends TestCase
         parent::setUp();
 
         $this->data = [
-            'tree1' => [
+            'tree3' => [
                 'subtree1' => 'a subtree 1 value'
             ],
             'tree2' => 'tree 2 value',
@@ -28,9 +28,13 @@ class HelpersTest extends TestCase
 
     public function testDataHas()
     {
-
         $this->assertTrue(data_has($this->data, 'tree1.subtree1'));
+        $this->assertTrue(data_has($this->data, null));
         $this->assertFalse(data_has($this->data, 'tree1.subtree1.0'));
+
+        $this->assertFalse(data_has(null, 'tree3.*'));
+        $this->assertTrue(data_has(collect($this->data), 'tree3.*'));
+        $this->assertTrue(data_has(arrayToObject($this->data), 'tree3.subtree1'));
 
         $this->assertTrue(data_has($this->data, 'tree2'));
         $this->assertTrue(data_has($this->data, '*'));

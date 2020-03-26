@@ -17,19 +17,29 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     /**
      * Find's the related model by ID
      *
-     * @param mixed $id
      * @param array $columns
-     * @param string|null $token
      * @param bool $checkAPI
      * @return Collection|RemoteModel|null
      * @throws APITokenInvalidException
      * @throws BindingResolutionException
      */
+
+    public function first($columns = [], bool $checkAPI = false)
+    {
+        $details = $this->findRelationshipDetails();
+
+        // If we get null back from a relationship we are pretty sure exists (i.e. is in database), we will just return
+        // the primary key
+        return parent::first($columns = []) ?? (!$checkAPI ? $this->model::initModelWithData([
+                $this->model->getKeyName() => $details->parentKey
+            ]) : null);
+    }
+
     public function find($id, $columns = [], string $token = null, bool $checkAPI = false)
     {
         // If we get null back from a relationship we are pretty sure exists (i.e. is in database), we will just return
         // the primary key
-        return parent::find($id, $columns, $token) ?? (! $checkAPI ? $this->model::initModelWithData([
+        return parent::find($id, $columns, $token) ?? (!$checkAPI ? $this->model::initModelWithData([
                 $this->model->getKeyName() => $id
             ]) : null);
     }
@@ -126,7 +136,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     {
         $details = $this->findRelationshipDetails();
 
-        if (! $details->table) {
+        if (!$details->table) {
             // Likely a one-to-one relationship. As long as an id is given, it is true
             if (($key = $this->query->wheres[0]['value']) == null) {
                 return false;
@@ -141,11 +151,11 @@ class RemoteRelationshipBuilder extends RemoteBuilder
             $existsInPivot = $this->query->count() > 0;
 
 
-            if (! $existsInPivot) {
+            if (!$existsInPivot) {
                 return false;
             }
 
-            if (! $checkAPI) {
+            if (!$checkAPI) {
                 return true;
             }
 
@@ -230,7 +240,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
      */
     private function determineRelatedPivotKeyName(): ?string
     {
-        if (! isset($this->query->joins[0]->wheres[0]['second'])) {
+        if (!isset($this->query->joins[0]->wheres[0]['second'])) {
             return null;
         }
 
