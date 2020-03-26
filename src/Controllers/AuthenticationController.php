@@ -37,7 +37,7 @@ class AuthenticationController extends Controller
         }
 
 
-        $response = Http::asForm()->post(config('ukauth.root_url') . config('ukauth.oauth_path') . '/token', [
+        $response = Http::post(config('ukauth.root_url') . config('ukauth.oauth_path') . '/token', [
             'grant_type' => 'authorization_code',
             'client_id' => config('ukauth.client_id'),
             'client_secret' => config('ukauth.client_secret'),
