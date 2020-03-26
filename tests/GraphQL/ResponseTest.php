@@ -25,11 +25,11 @@ class ResponseTest extends TestCase
 
         $this->builder = new PackageBuilder('user', ["name_first", "name_last",]);
         $this->multiBuilder = new PackageBuilder('users', ["name_first", "name_last",]);
-        $this->erroredResponse = new PackageResponse(MockJsonResponse::erroredResponse(), $this->builder);
-        $this->normalResponse = new PackageResponse(MockJsonResponse::successfulResponse(), $this->builder);
-        $this->normalMultipleResponse = new PackageResponse(MockJsonResponse::successfulMultipleResponse(), $this->multiBuilder);
-        $this->emptyDataResponse = new PackageResponse(MockJsonResponse::emptyResponse(), $this->builder);
-        $this->unauthenticatedResponse = new PackageResponse(MockJsonResponse::unauthenticatedResponse(), $this->builder);
+        $this->erroredResponse = new PackageResponse(arrayToObject(MockJsonResponse::erroredResponse()), $this->builder);
+        $this->normalResponse = new PackageResponse(arrayToObject(MockJsonResponse::successfulResponse()), $this->builder);
+        $this->normalMultipleResponse = new PackageResponse(arrayToObject(MockJsonResponse::successfulMultipleResponse()), $this->multiBuilder);
+        $this->emptyDataResponse = new PackageResponse(arrayToObject(MockJsonResponse::emptyResponse()), $this->builder);
+        $this->unauthenticatedResponse = new PackageResponse(arrayToObject(MockJsonResponse::unauthenticatedResponse()), $this->builder);
     }
 
     /** @test */

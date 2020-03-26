@@ -4,10 +4,7 @@
 namespace VATSIMUK\Support\Auth\Tests;
 
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use VATSIMUK\Support\Auth\Models\RemoteUser;
 use VATSIMUK\Support\Auth\UKAuthServiceProvider;
 
@@ -24,10 +21,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         parent::resolveApplicationConfiguration($app);
 
-        $defaultConfig = include(dirname(__FILE__).'/../config/ukauth.php');
+        $defaultConfig = include(dirname(__FILE__) . '/../config/ukauth.php');
 
-        foreach ($defaultConfig as $key => $value){
-            $app['config']->set('ukauth.'.$key, $value);
+        foreach ($defaultConfig as $key => $value) {
+            $app['config']->set('ukauth.' . $key, $value);
         }
 
         $app['config']->set('ukauth.auth_user_model', RemoteUser::class);
@@ -36,23 +33,25 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     public function mockGuzzleClientResponse($responses)
     {
-        $this->mock(Client::class, function ($mock) use ($responses) {
-            if(!is_array($responses)){
-                $mock->shouldReceive('request')
-                ->andReturn($responses);
-            }else{
-                $mock->shouldReceive('request')
-                    ->andReturnValues($responses);
+        if (!is_array($responses)) {
+            Http::fakeSequence()
+                ->whenEmpty($responses);
+        } else {
+
+            $sequence = Http::fakeSequence();
+            foreach ($responses as $response) {
+                $sequence->pushResponse($response);
             }
-        })->makePartial();
+
+            return $sequence;
+        }
     }
 
     public function mockGuzzleClientThrowRequestException()
     {
-        $this->mock(Client::class, function ($mock) {
-            $mock->shouldReceive('request')
-                ->andThrow(new RequestException(null, new Request('post', 'a/call')));
-        })->makePartial();
+        Http::fake(function ($request) {
+            return Http::response(null, 500);
+        });
     }
 
     public function assertCollectionSubset($subset, $collection)

@@ -4,6 +4,7 @@
 namespace VATSIMUK\Support\Auth\Tests\Models;
 
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Http;
 use VATSIMUK\Support\Auth\Models\RemoteBuilder;
 use VATSIMUK\Support\Auth\Models\RemoteUser;
 use VATSIMUK\Support\Auth\Tests\Fixtures\MockJsonResponse;
@@ -36,7 +37,7 @@ class RemoteUserTest extends TestCase
 
     public function testItCanRetrieveByAccessToken()
     {
-        $this->mockGuzzleClientResponse(new Response(200, [], json_encode(MockJsonResponse::successfulAuthUserResponse())));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulAuthUserResponse(), 200));
         $user = RemoteUser::findWithAccessToken('eyMyAuthAccessToken');
 
         $this->assertEquals("5th", $user->name_first);
@@ -50,7 +51,7 @@ class RemoteUserTest extends TestCase
 
         $this->assertNull($model->name_first);
 
-        $this->mockGuzzleClientResponse(new Response(200, [], json_encode([
+        $this->mockGuzzleClientResponse(Http::response([
             "data" => [
                 "user" => [
                     'atcRating' => [
@@ -60,7 +61,7 @@ class RemoteUserTest extends TestCase
                     'name_first' => "Joe"
                 ]
             ]
-        ])));
+        ], 200));
 
         $response = $model->loadMissingAttributes([
             'atcRating' => ['code'],
@@ -117,11 +118,15 @@ class RemoteUserTest extends TestCase
             'name_first' => 'Joe',
         ]);
 
-        $this->mockGuzzleClientThrowRequestException();
+        $responses = [
+            Http::response(null, 500),
+            Http::response(MockJsonResponse::successfulResponse(), 200)
+        ];
+
+        $this->mockGuzzleClientResponse($responses);
         $newModel = $model->fresh(['name_first', 'name_last', 'email'], 'eyFakeToken');
         $this->assertEquals($model, $newModel);
 
-        $this->mockGuzzleClientResponse(new Response(200, [], json_encode(MockJsonResponse::successfulResponse())));
         $model = $model->fresh(['name_first', 'name_last', 'email'], 'eyFakeToken');
 
         $this->assertEquals('5th Test', $model->name);
@@ -165,6 +170,7 @@ class RemoteUserTest extends TestCase
 
     public function testItCanRetrieveRatingsLazyLoaded()
     {
+        $this->mockGuzzleClientThrowRequestException();
         $user = new RemoteUser();
         $this->assertEmpty($user->attributesToArray());
 

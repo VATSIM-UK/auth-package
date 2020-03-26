@@ -4,7 +4,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 
-if (! function_exists('data_has')) {
+if (!function_exists('data_has')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
@@ -20,11 +20,11 @@ if (! function_exists('data_has')) {
 
         $key = is_array($key) ? $key : explode('.', $key);
 
-        while (! is_null($segment = array_shift($key))) {
+        while (!is_null($segment = array_shift($key))) {
             if ($segment === '*') {
                 if ($target instanceof Collection) {
                     $target = $target->all();
-                } elseif (! is_array($target)) {
+                } elseif (!is_array($target)) {
                     return false;
                 }
 
@@ -51,7 +51,7 @@ if (! function_exists('data_has')) {
 }
 
 
-if (! function_exists('array_to_dot')) {
+if (!function_exists('array_to_dot')) {
     /**
      * Extends the Laravel Arr::dot() function to allow for schema arrays rather than arrays with associated values
      *
@@ -71,5 +71,22 @@ if (! function_exists('array_to_dot')) {
             return $newValue;
         })->sort()->values();
 
+    }
+}
+
+if (!function_exists('arrayToObject')) {
+    /**
+     * @param ?array $array
+     * @return stdClass
+     */
+    function arrayToObject($array)
+    {
+        // First we convert the array to a json string
+        $json = json_encode($array);
+
+        // The we convert the json string to a stdClass()
+        $object = json_decode($json);
+
+        return $object;
     }
 }

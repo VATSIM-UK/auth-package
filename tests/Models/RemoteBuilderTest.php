@@ -5,6 +5,7 @@ namespace VATSIMUK\Support\Auth\Tests\Models;
 
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Http;
 use VATSIMUK\Support\Auth\GraphQL\Response;
 use VATSIMUK\Support\Auth\Models\RemoteBuilder;
 use VATSIMUK\Support\Auth\Tests\Fixtures\MockJsonResponse;
@@ -29,12 +30,12 @@ class RemoteBuilderTest extends TestCase
 
     public function testItCanReturnResponse()
     {
-        $this->mockGuzzleClientResponse(new \GuzzleHttp\Psr7\Response(200, [], json_encode(MockJsonResponse::successfulResponse('single'))));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulResponse('single'), 200));
         $response = $this->builder->returnResponse()->find(1300005, [], 'eyFakeToken');
 
         $this->assertInstanceOf(Response::class, $response);
 
-        $this->mockGuzzleClientResponse(new \GuzzleHttp\Psr7\Response(200, [], json_encode(MockJsonResponse::successfulMultipleResponse('many'))));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulMultipleResponse('many'), 200));
         $response = $this->builder->returnResponse()->findMany(1300005, [], 'eyFakeToken');
 
         $this->assertInstanceOf(Response::class, $response);
@@ -42,7 +43,7 @@ class RemoteBuilderTest extends TestCase
 
     public function testItCanReturnHydratedModel()
     {
-        $this->mockGuzzleClientResponse(new \GuzzleHttp\Psr7\Response(200, [], json_encode(MockJsonResponse::successfulResponse('single'))));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulResponse('single'), 200));
 
         $response = $this->builder->find(1300005, [], 'eyFakeToken');
         $this->assertInstanceOf(TestRemoteModel::class, $response);
@@ -50,7 +51,7 @@ class RemoteBuilderTest extends TestCase
 
     public function testItCanReturnHydratedModels()
     {
-        $this->mockGuzzleClientResponse(new \GuzzleHttp\Psr7\Response(200, [], json_encode(MockJsonResponse::successfulMultipleResponse('many'))));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulMultipleResponse('many'), 200));
 
         $response = $this->builder->findMany([1300001, 1300005], [], 'eyFakeToken');
 
@@ -66,17 +67,17 @@ class RemoteBuilderTest extends TestCase
 
     public function testItCanGetManyByID()
     {
-        $this->mockGuzzleClientResponse(new \GuzzleHttp\Psr7\Response(200, [], json_encode(MockJsonResponse::successfulMultipleResponse('many'))));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulMultipleResponse('many'), 200));
         $this->builder->setToken('eyFakeToken');
         $response = (clone $this->builder)->whereIn('id', [1300001, 1300005])->get();
         $this->assertEquals(2, count($response));
 
-        $this->mockGuzzleClientResponse(new \GuzzleHttp\Psr7\Response(200, [], json_encode(MockJsonResponse::successfulMultipleResponse('many'))));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulMultipleResponse('many'), 200));
         $response = (clone $this->builder)->where('id', 1300001)->get();
         $this->assertInstanceOf(\Illuminate\Support\Collection::class, $response);
         $this->assertFalse($response->isEmpty());
 
-        $this->mockGuzzleClientResponse(new \GuzzleHttp\Psr7\Response(200, [], json_encode(MockJsonResponse::successfulMultipleResponse('many'))));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulMultipleResponse('many'), 200));
         $response = (clone $this->builder)->whereIn('name', ['Joe', 'Jeff'])->get();
         $this->assertInstanceOf(\Illuminate\Support\Collection::class, $response);
         $this->assertTrue($response->isEmpty());
@@ -84,7 +85,7 @@ class RemoteBuilderTest extends TestCase
 
     public function testItReturnsFindManyIfArrayGiven()
     {
-        $this->mockGuzzleClientResponse(new \GuzzleHttp\Psr7\Response(200, [], json_encode(MockJsonResponse::successfulMultipleResponse('many'))));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulMultipleResponse('many'), 200));
         $this->builder->setToken('eyFakeToken');
         $response = $this->builder->find([1300001, 1300005]);
         $this->assertEquals(2, count($response));
@@ -92,7 +93,7 @@ class RemoteBuilderTest extends TestCase
 
     public function testItCanFindFirstById()
     {
-        $this->mockGuzzleClientResponse(new \GuzzleHttp\Psr7\Response(200, [], json_encode(MockJsonResponse::successfulResponse('single'))));
+        $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulResponse('single'), 200));
         $this->builder->setToken('eyFakeToken');
         $response = (clone $this->builder)->where('id', 1300001)->first();
         $this->assertInstanceOf(TestRemoteModel::class, $response);

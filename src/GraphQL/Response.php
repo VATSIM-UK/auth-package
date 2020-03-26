@@ -38,7 +38,7 @@ class Response
      */
     public function getErrors(): ?array
     {
-        if (! $this->hasErrors()) {
+        if (!$this->hasErrors()) {
             return null;
         }
         return $this->jsonResponse->errors;
@@ -50,12 +50,12 @@ class Response
      */
     public function hasUnauthenticatedError(): bool
     {
-        if (! $this->hasErrors()) {
+        if (!$this->hasErrors()) {
             return false;
         }
 
         foreach ($this->getErrors() as $error) {
-            $error = (object) $error;
+            $error = (object)$error;
             if (isset($error->debugMessage) && $error->debugMessage == "Unauthenticated.") {
                 return true;
             }
@@ -89,7 +89,7 @@ class Response
      */
     public function isOk(): bool
     {
-        return ! $this->hasErrors() && isset($this->jsonResponse->data);
+        return !$this->hasErrors() && isset($this->jsonResponse->data);
     }
 
     /**
@@ -111,18 +111,18 @@ class Response
      */
     public function getHydratedResults($modelClass)
     {
-        if (! $this->getResults()) {
+        if (!$this->getResults()) {
             return null;
         }
 
-        if (! is_object($modelClass)) {
+        if (!is_object($modelClass)) {
             $modelClass = resolve($modelClass);
         }
 
-        return ! Arr::isAssoc((array)$this->getResults()) ?
-            $modelClass->newQueryWithoutScopes()->hydrate((array) $this->getResults())
+        return !Arr::isAssoc((array)$this->getResults()) ?
+            $modelClass->newQueryWithoutScopes()->hydrate((array)$this->getResults())
             :
-            $modelClass->newQueryWithoutScopes()->make((array) $this->getResults());
+            $modelClass->newQueryWithoutScopes()->make((array)$this->getResults());
     }
 
     /**

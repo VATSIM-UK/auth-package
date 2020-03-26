@@ -11,7 +11,7 @@ class MockJsonResponse
      */
     public static function successfulAuthUserResponse()
     {
-        return json_decode('{"data":{"authUser":{"id":"1300005","name_first":"5th","name_last":"Test","email":"joe.bloggs@example.org"}}}');
+        return json_decode('{"data":{"authUser":{"id":"1300005","name_first":"5th","name_last":"Test","email":"joe.bloggs@example.org"}}}', true);
     }
 
     /**
@@ -22,7 +22,7 @@ class MockJsonResponse
      */
     public static function successfulResponse($method = "user")
     {
-        return json_decode('{"data":{"'.$method.'":{"id":"1300005","name_first":"5th","name_last":"Test","email":"joe.bloggs@example.org"}}}');
+        return json_decode('{"data":{"'.$method.'":{"id":"1300005","name_first":"5th","name_last":"Test","email":"joe.bloggs@example.org"}}}', true);
     }
 
     /**
@@ -32,7 +32,7 @@ class MockJsonResponse
      */
     public static function successfulMultipleResponse($method = "users")
     {
-        return json_decode('{"data":{"'.$method.'":[{"id":"1300001","name_first":"1st","name_last":"Test"}, {"id":"1300005","name_first":"5th","name_last":"Test"}]}}');
+        return json_decode('{"data":{"'.$method.'":[{"id":"1300001","name_first":"1st","name_last":"Test"}, {"id":"1300005","name_first":"5th","name_last":"Test"}]}}', true);
     }
 
     /**
@@ -42,19 +42,19 @@ class MockJsonResponse
      */
     public static function emptyResponse()
     {
-        return json_decode('{"data":{"user":null}}');
+        return json_decode('{"data":{"user":null}}', true);
     }
 
     public static function erroredResponse()
     {
-        return json_decode('{"errors": [ { "message": "There was an error" } ]}');
+        return json_decode('{"errors": [ { "message": "There was an error" } ]}', true);
     }
 
 
 
     public static function unauthenticatedResponse()
     {
-        return (object) [
+        return [
             "errors" => [
                 ["debugMessage" => "Unauthenticated."]
             ]

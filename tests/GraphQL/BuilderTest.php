@@ -3,7 +3,7 @@
 
 namespace VATSIMUK\Support\Auth\Tests\GraphQL;
 
-use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Http;
 use VATSIMUK\Support\Auth\Exceptions\APITokenInvalidException;
 use VATSIMUK\Support\Auth\GraphQL\Builder;
 use VATSIMUK\Support\Auth\Tests\Fixtures\MockJsonResponse;
@@ -23,26 +23,17 @@ class BuilderTest extends TestCase
 
     public function testItCanBeExecuted()
     {
-        // Test token retrieving
-        $this->mockGuzzleClientThrowRequestException();
+        Http::fakeSequence()
+            ->pushResponse(Http::response(null, 500))
+            ->pushResponse(Http::response(MockJsonResponse::successfulResponse(), 200))
+            ->pushResponse(Http::response(null, 500));
 
+        // Test token retrieving
         $this->assertFalse($this->builder->execute()->isOk());
 
-        $responses = [
-            new Response(200, [], json_encode([
-                'type' => 'Bearer',
-                'access_token' => 'eyTokenHere'
-            ])),
-            new Response(200, [], json_encode(MockJsonResponse::successfulResponse()))
-        ];
-
-        $this->mockGuzzleClientResponse($responses);
-
-        $this->assertInstanceOf(\VATSIMUK\Support\Auth\GraphQL\Response::class, $response = $this->builder->execute());
+        $this->assertInstanceOf(\VATSIMUK\Support\Auth\GraphQL\Response::class, $response = $this->builder->execute('eyTokenHere'));
         $this->assertFalse($response->hasErrors());
         $this->assertEquals($response->getResults()->name_first, '5th');
-
-        $this->mockGuzzleClientThrowRequestException();
 
         // With Failed Token Retrieval
         $this->assertTrue(($response = $this->builder->execute())->hasErrors());
@@ -53,12 +44,12 @@ class BuilderTest extends TestCase
     {
 
         $responses = [
-            new Response(200, [], json_encode([
+            Http::response([
                 'type' => 'Bearer',
                 'access_token' => 'eyTokenHere'
-            ])),
-            new Response(200, [], 'justa string, not json'),
-            new Response(200, [], json_encode(MockJsonResponse::unauthenticatedResponse())),
+            ], 200),
+            Http::response('just a string, not json', 200),
+            Http::response(MockJsonResponse::unauthenticatedResponse(), 200),
         ];
 
         $this->mockGuzzleClientResponse($responses);
@@ -72,19 +63,14 @@ class BuilderTest extends TestCase
     public function testItCanCheckAPIPulse()
     {
         $responses = [
-            new Response(200, [], '{"alive":true}'),
-            new Response(500, [])
+            Http::response('{"alive":true}', 200),
+            Http::response(null, 500),
         ];
 
         $this->mockGuzzleClientResponse($responses);
 
         $this->assertTrue($this->builder::checkAlive());
         $this->assertFalse($this->builder::checkAlive());
-
-
-        $this->mockGuzzleClientThrowRequestException();
-        $this->builder::checkAlive();
-
     }
 
     public function testItCanComposeAGraphQLQuery()
