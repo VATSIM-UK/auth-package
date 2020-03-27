@@ -3,7 +3,6 @@
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-
 if (! function_exists('data_has')) {
     /**
      * Get an item from an array or object using "dot" notation.
@@ -50,10 +49,9 @@ if (! function_exists('data_has')) {
     }
 }
 
-
 if (! function_exists('array_to_dot')) {
     /**
-     * Extends the Laravel Arr::dot() function to allow for schema arrays rather than arrays with associated values
+     * Extends the Laravel Arr::dot() function to allow for schema arrays rather than arrays with associated values.
      *
      * @param $array
      * @return Collection
@@ -66,10 +64,26 @@ if (! function_exists('array_to_dot')) {
             $exploded = explode('.', $key);
             array_pop($exploded);
             $exploded[] = $value;
-            $newValue = implode(".", $exploded);
+            $newValue = implode('.', $exploded);
 
             return $newValue;
         })->sort()->values();
+    }
+}
 
+if (! function_exists('arrayToObject')) {
+    /**
+     * @param ?array $array
+     * @return stdClass
+     */
+    function arrayToObject($array)
+    {
+        // First we convert the array to a json string
+        $json = json_encode($array);
+
+        // The we convert the json string to a stdClass()
+        $object = json_decode($json);
+
+        return $object;
     }
 }

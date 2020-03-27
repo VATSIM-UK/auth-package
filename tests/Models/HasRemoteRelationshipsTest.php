@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Tests\Models;
-
 
 use Mockery\MockInterface;
 use VATSIMUK\Support\Auth\Models\RemoteUser;
@@ -28,18 +26,16 @@ class HasRemoteRelationshipsTest extends TestCase
     {
         $this->assertInstanceOf(RemoteUser::class, $this->model->createNewRelatedInstance(RemoteUser::class));
 
-        $mockedUser = $this->spy(RemoteUser::class, function (MockInterface $mock){
+        $mockedUser = $this->spy(RemoteUser::class, function (MockInterface $mock) {
             $mock->shouldReceive('setRelationshipBuilder')->once();
         });
 
         $this->assertInstanceOf(RemoteUser::class, $this->model->createNewRelatedInstance($mockedUser));
 
-        $mockedNormalModel = $this->spy(TestModel::class, function (MockInterface $mock){
+        $mockedNormalModel = $this->spy(TestModel::class, function (MockInterface $mock) {
             $mock->shouldNotReceive('setRelationshipBuilder');
         });
 
         $this->model->createNewRelatedInstance($mockedNormalModel);
     }
-
-
 }

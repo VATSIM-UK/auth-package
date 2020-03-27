@@ -1,12 +1,9 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Tests;
-
 
 class HelpersTest extends TestCase
 {
-
     private $data;
 
     protected function setUp(): void
@@ -14,13 +11,13 @@ class HelpersTest extends TestCase
         parent::setUp();
 
         $this->data = [
-            'tree1' => [
-                'subtree1' => 'a subtree 1 value'
+            'tree3' => [
+                'subtree1' => 'a subtree 1 value',
             ],
             'tree2' => 'tree 2 value',
             'tree1' => [
                 'subtree1' => [
-                    'subsubtree1' => 'a subsubtree 1 value'
+                    'subsubtree1' => 'a subsubtree 1 value',
                 ],
             ],
         ];
@@ -28,9 +25,13 @@ class HelpersTest extends TestCase
 
     public function testDataHas()
     {
-
         $this->assertTrue(data_has($this->data, 'tree1.subtree1'));
+        $this->assertTrue(data_has($this->data, null));
         $this->assertFalse(data_has($this->data, 'tree1.subtree1.0'));
+
+        $this->assertFalse(data_has(null, 'tree3.*'));
+        $this->assertTrue(data_has(collect($this->data), 'tree3.*'));
+        $this->assertTrue(data_has(arrayToObject($this->data), 'tree3.subtree1'));
 
         $this->assertTrue(data_has($this->data, 'tree2'));
         $this->assertTrue(data_has($this->data, '*'));
@@ -42,15 +43,15 @@ class HelpersTest extends TestCase
         $this->assertEquals([
             'user.bans.body',
             'user.bans.reason',
-            'user.name'
+            'user.name',
         ], array_to_dot([
             'user' => [
                 'name',
                 'bans' => [
                     'body',
-                    'reason'
-                ]
-            ]
+                    'reason',
+                ],
+            ],
         ])->all());
     }
 }

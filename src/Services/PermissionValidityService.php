@@ -1,6 +1,5 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Services;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -19,7 +18,7 @@ class PermissionValidityService
      */
     public function isValidPermission($permission): bool
     {
-        if($permission == '*'){
+        if ($permission == '*') {
             return true;
         }
 
@@ -78,8 +77,8 @@ class PermissionValidityService
 
         // 3: Have some wildcard permissions. Check if they match the required permission
         return $wildcardPermissions->search(function ($value) use ($permission) {
-                return fnmatch($value, $permission) || fnmatch(str_replace('.*', '*', $value), $permission);
-            }) !== false;
+            return fnmatch($value, $permission) || fnmatch(str_replace('.*', '*', $value), $permission);
+        }) !== false;
     }
 
     /**
@@ -89,9 +88,10 @@ class PermissionValidityService
      */
     public function loadJsonPermissions(): array
     {
-        if(!file_exists(resource_path('permissions/permissions.json'))){
+        if (! file_exists(resource_path('permissions/permissions.json'))) {
             return [];
         }
+
         return $this->jsonPermissions ? $this->jsonPermissions : $this->jsonPermissions = json_decode(file_get_contents(resource_path('permissions/permissions.json')), true);
     }
 }

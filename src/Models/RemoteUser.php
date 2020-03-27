@@ -1,6 +1,5 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Models;
 
 use Illuminate\Auth\Authenticatable;
@@ -16,16 +15,16 @@ class RemoteUser extends RemoteModel
 {
     use HasRatings, Authenticatable, HasPermissions, Authorizable;
 
-    protected static $singleMethod = "user";
-    protected static $manyMethod = "users";
+    protected static $singleMethod = 'user';
+    protected static $manyMethod = 'users';
 
     protected static $defaultFields = [
-        "name_first",
-        "name_last",
+        'name_first',
+        'name_last',
     ];
 
     /**
-     * Finds the user by their Auth API Access Token
+     * Finds the user by their Auth API Access Token.
      *
      * @param string $token
      * @param array $columns
@@ -42,7 +41,7 @@ class RemoteUser extends RemoteModel
     }
 
     /**
-     * Gets the user's full name
+     * Gets the user's full name.
      *
      * @return string|null
      */
@@ -51,6 +50,7 @@ class RemoteUser extends RemoteModel
         if (! $this->name_first && ! $this->name_last) {
             return $this->id;
         }
+
         return "{$this->name_first} {$this->name_last}";
     }
 }

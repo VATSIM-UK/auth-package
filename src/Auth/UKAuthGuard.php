@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Auth;
-
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
@@ -13,7 +11,6 @@ use VATSIMUK\Support\Auth\Services\JWTService;
 
 class UKAuthGuard implements Guard
 {
-
     protected $request;
     protected $provider;
     protected $user;
@@ -29,7 +26,7 @@ class UKAuthGuard implements Guard
     {
         $this->request = $request;
         $this->provider = $provider;
-        $this->user = NULL;
+        $this->user = null;
         $this->validate();
     }
 
@@ -89,6 +86,7 @@ class UKAuthGuard implements Guard
             if ($this->user) {
                 return true;
             }
+
             return false;
         }
 

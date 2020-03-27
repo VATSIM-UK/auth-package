@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Models;
-
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Support\Arrayable;
@@ -21,7 +19,7 @@ use VATSIMUK\Support\Auth\GraphQL\Response;
 class RemoteBuilder extends Builder
 {
     /**
-     * Whether or not to return the model(s) or the response object
+     * Whether or not to return the model(s) or the response object.
      *
      * @var bool
      */
@@ -35,14 +33,14 @@ class RemoteBuilder extends Builder
     protected $model;
 
     /**
-     * Optional API call token
+     * Optional API call token.
      *
      * @var string|null
      */
     private $token;
 
     /**
-     * Columns to add to the query (in addition to those specified in the find/get function)
+     * Columns to add to the query (in addition to those specified in the find/get function).
      *
      * @var array
      */
@@ -62,20 +60,21 @@ class RemoteBuilder extends Builder
 
     /**
      * Makes the outcome of the query a Response object instead of a model
-     * Can be chained, e.g. RemoteModel::returnResponse->find(1)
+     * Can be chained, e.g. RemoteModel::returnResponse->find(1).
      *
      * @return RemoteBuilder
      */
     public function returnResponse(): self
     {
         $this->returnResponse = true;
+
         return $this;
     }
 
     /**
      * Adds in columns to be retrieved in the API call in addition to manually specified ones.
      * Mostly used for scoping on the model.
-     * Can be chained, e.g. RemoteModel::withColumns(["atcRating.code"])->find(1)
+     * Can be chained, e.g. RemoteModel::withColumns(["atcRating.code"])->find(1).
      *
      * @param array $columns
      * @return RemoteBuilder
@@ -83,11 +82,12 @@ class RemoteBuilder extends Builder
     public function withColumns(array $columns): self
     {
         $this->queryColumns = array_merge($this->queryColumns, $columns);
+
         return $this;
     }
 
     /**
-     * Parses built query, and performs query
+     * Parses built query, and performs query.
      *
      * @param array $columns
      * @return Collection
@@ -99,7 +99,7 @@ class RemoteBuilder extends Builder
         // Only support IDs for now
         $ids = [];
         foreach ($this->query->wheres as $where) {
-            if ($this->getColumnNameWithoutTable($where['column']) != "id") {
+            if ($this->getColumnNameWithoutTable($where['column']) != 'id') {
                 continue;
             }
 
@@ -121,9 +121,8 @@ class RemoteBuilder extends Builder
         return $this->findMany($ids, $columns, $this->token);
     }
 
-
     /**
-     * Find the remote model with the given ID
+     * Find the remote model with the given ID.
      *
      * @param mixed $id
      * @param array|null $columns
@@ -146,16 +145,15 @@ class RemoteBuilder extends Builder
 
         $response = $query->execute($token ?? $this->token);
 
-        if($this->returnResponse){
+        if ($this->returnResponse) {
             return $response;
         }
 
         return $response->getHydratedResults($this->model);
     }
 
-
     /**
-     * Finds multiple remote model's for the given IDs
+     * Finds multiple remote model's for the given IDs.
      *
      * @param Arrayable|array $ids
      * @param array $columns
@@ -166,7 +164,7 @@ class RemoteBuilder extends Builder
      */
     public function findMany($ids, $columns = [], string $token = null)
     {
-        $argument = "ids:" . json_encode($ids);
+        $argument = 'ids:'.json_encode($ids);
 
         $query = new GraphQLBuilder(
             $this->model->getMultipleAPIMethod(),
@@ -176,7 +174,7 @@ class RemoteBuilder extends Builder
 
         $response = $query->execute($token ?? $this->token);
 
-        if($this->returnResponse){
+        if ($this->returnResponse) {
             return $response;
         }
 
@@ -194,15 +192,15 @@ class RemoteBuilder extends Builder
     public function first($columns = [])
     {
         // Only support IDs for now
-        if ($this->getColumnNameWithoutTable($this->query->wheres[0]['column']) != "id") {
-            return null;
+        if ($this->getColumnNameWithoutTable($this->query->wheres[0]['column']) != 'id') {
+            return;
         }
+
         return $this->find($this->query->wheres[0]['value'], $columns, $this->token);
     }
 
-
     /**
-     * Generates a list of fields to get for the user model, using defaults or supplied list of fields
+     * Generates a list of fields to get for the user model, using defaults or supplied list of fields.
      *
      * @param array $columns
      * @return array
@@ -213,7 +211,7 @@ class RemoteBuilder extends Builder
             $columns = null;
         }
 
-        if(count($this->queryColumns) > 0){
+        if (count($this->queryColumns) > 0) {
             $columns = $columns ? array_merge($columns, $this->queryColumns) : $this->queryColumns;
         }
 
@@ -229,9 +227,8 @@ class RemoteBuilder extends Builder
             ), SORT_REGULAR);
     }
 
-
     /**
-     * Removes the table name from an SQL column
+     * Removes the table name from an SQL column.
      *
      * @param string column
      * @return string

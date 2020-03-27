@@ -5,6 +5,6 @@ Route::namespace('VATSIMUK\Support\Auth\Controllers')
     ->prefix('auth')
     ->name('auth.')
     ->group(function () {
-    Route::get('login', 'AuthenticationController@login')->name('login');
-    Route::get('login/verify', 'AuthenticationController@verifyLogin')->name('login.verify');
-});
+        Route::get('login', 'AuthenticationController@login')->name('login');
+        Route::get('login/verify', 'AuthenticationController@verifyLogin')->name('login.verify');
+    });
