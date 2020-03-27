@@ -1,6 +1,5 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Tests\GraphQL;
 
 use Illuminate\Support\Facades\Http;
@@ -18,7 +17,7 @@ class BuilderTest extends TestCase
     {
         parent::setUp();
 
-        $this->builder = new Builder("user", ['id', 'id', 'name_first', 'ratings' => ['id', 'name'], 'bans.body']);
+        $this->builder = new Builder('user', ['id', 'id', 'name_first', 'ratings' => ['id', 'name'], 'bans.body']);
     }
 
     public function testItCanBeExecuted()
@@ -42,11 +41,10 @@ class BuilderTest extends TestCase
 
     public function testItHandlesIncorrectAPIResponse()
     {
-
         $responses = [
             Http::response([
                 'type' => 'Bearer',
-                'access_token' => 'eyTokenHere'
+                'access_token' => 'eyTokenHere',
             ], 200),
             Http::response('just a string, not json', 200),
             Http::response(MockJsonResponse::unauthenticatedResponse(), 200),
@@ -76,7 +74,7 @@ class BuilderTest extends TestCase
     public function testItCanComposeAGraphQLQuery()
     {
         $this->assertEquals(trim(preg_replace('/ {4}|\r/', '',
-            "query {
+            'query {
                     user {
                         id
                         name_first
@@ -88,11 +86,11 @@ class BuilderTest extends TestCase
                             body
                         }
                     }
-                }")), $this->builder->getGraphQLQuery());
+                }')), $this->builder->getGraphQLQuery());
     }
 
     public function testItReturnsTheMethod()
     {
-        $this->assertEquals("user", $this->builder->getMethod());
+        $this->assertEquals('user', $this->builder->getMethod());
     }
 }

@@ -8,7 +8,6 @@ use VATSIMUK\Support\Auth\Tests\TestCase;
 
 class PermissionValidityServiceTest extends TestCase
 {
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -35,7 +34,6 @@ class PermissionValidityServiceTest extends TestCase
         })->makePartial();
     }
 
-
     /** @test */
     public function itIdentifiesIfPermissionIsValid()
     {
@@ -49,7 +47,6 @@ class PermissionValidityServiceTest extends TestCase
         $this->assertFalse(PermissionValidity::isValidPermission('auth.users.mutate'));
         $this->assertFalse(PermissionValidity::isValidPermission('example.doesnt.exist'));
     }
-
 
     /** @test */
     public function itReportsIfPermissionIsGrantedFromListOfHeldPermissions()

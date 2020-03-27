@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Tests\Fixtures;
-
 
 use VATSIMUK\Support\Auth\Models\Concerns\HasRemoteRelationships;
 use VATSIMUK\Support\Auth\Models\RemoteModel;
@@ -12,8 +10,8 @@ class TestRemoteModel extends RemoteModel
 {
     use HasRemoteRelationships;
 
-    protected static $singleMethod = "single";
-    protected static $manyMethod = "many";
+    protected static $singleMethod = 'single';
+    protected static $manyMethod = 'many';
 
     public function belongsToManyRelation()
     {
@@ -29,5 +27,4 @@ class TestRemoteModel extends RemoteModel
     {
         return $this->newRelatedInstance($model);
     }
-
 }

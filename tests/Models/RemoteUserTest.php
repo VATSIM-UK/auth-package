@@ -1,9 +1,7 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Tests\Models;
 
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Http;
 use VATSIMUK\Support\Auth\Models\RemoteBuilder;
 use VATSIMUK\Support\Auth\Models\RemoteUser;
@@ -40,43 +38,43 @@ class RemoteUserTest extends TestCase
         $this->mockGuzzleClientResponse(Http::response(MockJsonResponse::successfulAuthUserResponse(), 200));
         $user = RemoteUser::findWithAccessToken('eyMyAuthAccessToken');
 
-        $this->assertEquals("5th", $user->name_first);
+        $this->assertEquals('5th', $user->name_first);
     }
 
     public function testItCanLoadMissingAttributes()
     {
         $model = new RemoteUser([
-            'id' => 123
+            'id' => 123,
         ]);
 
         $this->assertNull($model->name_first);
 
         $this->mockGuzzleClientResponse(Http::response([
-            "data" => [
-                "user" => [
+            'data' => [
+                'user' => [
                     'atcRating' => [
-                        'code' => "C1"
+                        'code' => 'C1',
                     ],
                     'id' => 123,
-                    'name_first' => "Joe"
-                ]
-            ]
+                    'name_first' => 'Joe',
+                ],
+            ],
         ], 200));
 
         $response = $model->loadMissingAttributes([
             'atcRating' => ['code'],
             'id',
-            'name_first'
+            'name_first',
         ], 'eyFakeToken');
 
         $this->assertInstanceOf(RemoteUser::class, $response);
-        $this->assertEquals("Joe", $response->name_first);
+        $this->assertEquals('Joe', $response->name_first);
     }
 
     public function testItCanLoadMissingAttributesHandlesDownAPI()
     {
         $model = new RemoteUser([
-            'id' => 123
+            'id' => 123,
         ]);
 
         $this->mockGuzzleClientThrowRequestException();
@@ -84,7 +82,7 @@ class RemoteUserTest extends TestCase
         $response = $model->loadMissingAttributes([
             'atcRating' => ['code'],
             'id',
-            'email'
+            'email',
         ]);
 
         $this->assertInstanceOf(RemoteUser::class, $response);
@@ -100,8 +98,8 @@ class RemoteUserTest extends TestCase
             'id' => 123,
             'name_first' => 'Joe',
             'activeBan' => [
-                'body' => 'Was Naughty'
-            ]
+                'body' => 'Was Naughty',
+            ],
         ]);
 
         $this->assertEquals('Joe', $model->attribute('name_first'));
@@ -120,7 +118,7 @@ class RemoteUserTest extends TestCase
 
         $responses = [
             Http::response(null, 500),
-            Http::response(MockJsonResponse::successfulResponse(), 200)
+            Http::response(MockJsonResponse::successfulResponse(), 200),
         ];
 
         $this->mockGuzzleClientResponse($responses);
@@ -177,7 +175,6 @@ class RemoteUserTest extends TestCase
         $this->assertNull($user->pilotRatings);
         $this->assertNotEmpty($user->attributesToArray());
 
-
         $user = new RemoteUser();
         $this->assertNull($user->atcRating->code);
         $this->assertNotEmpty($user->attributesToArray());
@@ -188,13 +185,12 @@ class RemoteUserTest extends TestCase
         $user = RemoteUser::initModelWithData([
             'all_permissions' => [
                 'auth.user.create',
-                'auth.bans.*'
-            ]
+                'auth.bans.*',
+            ],
         ]);
 
         $this->assertTrue($user->can('auth.user.create'));
         $this->assertTrue($user->can('auth.bans.modify.repeal'));
         $this->assertFalse($user->can('auth.permissions.add'));
-
     }
 }

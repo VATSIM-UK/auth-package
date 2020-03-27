@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Models;
-
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -22,12 +20,10 @@ abstract class RemoteModel extends Model
 
     public function __construct(array $attributes = [])
     {
-        if ( !isset(static::$singleMethod))
-        {
+        if (! isset(static::$singleMethod)) {
             throw new Exception('RemoteModels must define the $singleMethod property');
         }
-        if ( !isset(static::$manyMethod))
-        {
+        if (! isset(static::$manyMethod)) {
             throw new Exception('RemoteModels must define the $manyMethod property');
         }
 
@@ -36,21 +32,22 @@ abstract class RemoteModel extends Model
 
     /**
      * Like doing "loadMissing" for eloquent relationships, but eager loads missing attributes on the model
-     * Should be a 1D array. For relationships, use "dot" notation (e.g. relationship.name)
+     * Should be a 1D array. For relationships, use "dot" notation (e.g. relationship.name).
      *
-     * @param String[] $attributes
+     * @param string[] $attributes
      * @param string|null $token Optional API token, otherwise machine-machine will be used
      * @return RemoteModel
      * @throws APITokenInvalidException
      * @throws BindingResolutionException
      */
-    public function loadMissingAttributes(array $attributes, string $token = null, $nullAsArray = false): RemoteModel
+    public function loadMissingAttributes(array $attributes, string $token = null, $nullAsArray = false): self
     {
         // Convert all arrays into dot notation
         $attributes = collect($attributes)->map(function ($attribute, $key) {
             if (is_array($attribute)) {
                 return array_to_dot([$key => $attribute]);
             }
+
             return $attribute;
         })->flatten();
 
@@ -59,11 +56,13 @@ abstract class RemoteModel extends Model
             if (data_has($this->attributes, $attribute)) {
                 return true;
             }
+
             return false;
         })->each(function ($attribute) use ($nullAsArray) {
             // Preset the value to ensure no infinite loop if API unavailable
-            if($nullAsArray){
+            if ($nullAsArray) {
                 data_set($this->attributes, explode('.', $attribute)[0], null);
+
                 return;
             }
             data_set($this->attributes, $attribute, null);
@@ -76,11 +75,12 @@ abstract class RemoteModel extends Model
         }
 
         $this->attributes = array_merge($this->attributes, $fetchedModel->attributes);
+
         return $this;
     }
 
     /**
-     * Returns, or fetches if not set, the attribute for the model
+     * Returns, or fetches if not set, the attribute for the model.
      *
      * @param string $attribute
      * @param string|null $token Optional API token, otherwise machine-machine will be used
@@ -93,11 +93,12 @@ abstract class RemoteModel extends Model
         if (! data_get($this, $attribute)) {
             $this->loadMissingAttributes([$attribute], $token);
         }
+
         return data_get($this, $attribute);
     }
 
     /**
-     * Retrieve an updated model instance from the Auth API
+     * Retrieve an updated model instance from the Auth API.
      *
      * @param array|null $columns
      * @param string|null $token Optional Auth API token for the request
@@ -120,7 +121,7 @@ abstract class RemoteModel extends Model
     }
 
     /**
-     * Sets the Builder class to use
+     * Sets the Builder class to use.
      *
      * @param Builder $query
      * @return RemoteBuilder
@@ -131,7 +132,7 @@ abstract class RemoteModel extends Model
     }
 
     /**
-     * Creates an instance of the model with the given data filled
+     * Creates an instance of the model with the given data filled.
      *
      * @param $data
      * @return self
@@ -142,7 +143,7 @@ abstract class RemoteModel extends Model
     }
 
     /**
-     * Get the API method for fetching a single model
+     * Get the API method for fetching a single model.
      *
      * @return string
      */
@@ -152,7 +153,7 @@ abstract class RemoteModel extends Model
     }
 
     /**
-     * Get the API method for fetching multiple of the model
+     * Get the API method for fetching multiple of the model.
      *
      * @return string
      */
@@ -162,7 +163,7 @@ abstract class RemoteModel extends Model
     }
 
     /**
-     * Get the default fields array
+     * Get the default fields array.
      *
      * @return array
      */
@@ -172,7 +173,7 @@ abstract class RemoteModel extends Model
     }
 
     /**
-     * Sets the Relationship Builder boolean
+     * Sets the Relationship Builder boolean.
      *
      * @param bool $bool
      */

@@ -1,14 +1,8 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Tests\Models;
 
-
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Http;
-use VATSIMUK\Support\Auth\GraphQL\Response;
 use VATSIMUK\Support\Auth\Models\RemoteBuilder;
-use VATSIMUK\Support\Auth\Tests\Fixtures\MockJsonResponse;
 use VATSIMUK\Support\Auth\Tests\Fixtures\TestModel;
 use VATSIMUK\Support\Auth\Tests\Fixtures\TestRemoteModel;
 use VATSIMUK\Support\Auth\Tests\TestCase;
@@ -31,7 +25,7 @@ class RemoteRelationshipBuilderTest extends TestCase
         $this->class = new TestModel([
             'id' => 123,
             'foreign_key' => 456,
-            'local_key' => 789
+            'local_key' => 789,
         ]);
 
         $this->builder = $this->class->remoteModel();

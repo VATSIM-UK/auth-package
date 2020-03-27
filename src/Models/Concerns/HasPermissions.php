@@ -1,6 +1,5 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Models\Concerns;
 
 use Illuminate\Support\Collection;
@@ -54,7 +53,7 @@ trait HasPermissions
             $permissions = $permissions[0];
         }
         foreach ($permissions as $permission) {
-            if (!$this->hasPermissionTo($permission)) {
+            if (! $this->hasPermissionTo($permission)) {
                 return false;
             }
         }

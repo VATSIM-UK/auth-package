@@ -23,8 +23,8 @@ class ResponseTest extends TestCase
     {
         parent::setUp();
 
-        $this->builder = new PackageBuilder('user', ["name_first", "name_last",]);
-        $this->multiBuilder = new PackageBuilder('users', ["name_first", "name_last",]);
+        $this->builder = new PackageBuilder('user', ['name_first', 'name_last']);
+        $this->multiBuilder = new PackageBuilder('users', ['name_first', 'name_last']);
         $this->erroredResponse = new PackageResponse(arrayToObject(MockJsonResponse::erroredResponse()), $this->builder);
         $this->normalResponse = new PackageResponse(arrayToObject(MockJsonResponse::successfulResponse()), $this->builder);
         $this->normalMultipleResponse = new PackageResponse(arrayToObject(MockJsonResponse::successfulMultipleResponse()), $this->multiBuilder);
@@ -61,20 +61,20 @@ class ResponseTest extends TestCase
             'id' => 1300005,
             'name_first' => '5th',
             'name_last' => 'Test',
-            'email' => 'joe.bloggs@example.org'
+            'email' => 'joe.bloggs@example.org',
         ];
 
         $this->assertInstanceOf(\stdClass::class, $this->normalResponse->getResults());
-        $this->assertEquals((array)$this->normalResponse->getResults(), $expected);
+        $this->assertEquals((array) $this->normalResponse->getResults(), $expected);
     }
 
     /** @test */
     public function itExtractsTheErrorsFromBadResponse()
     {
         $firstErrorIndex = 0;
-        $expected = ['message' => "There was an error"];
+        $expected = ['message' => 'There was an error'];
 
-        $this->assertEquals((array)$this->erroredResponse->getErrors()[$firstErrorIndex], $expected);
+        $this->assertEquals((array) $this->erroredResponse->getErrors()[$firstErrorIndex], $expected);
         $this->assertNull($this->normalResponse->getErrors());
     }
 

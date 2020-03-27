@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Tests\Fixtures;
-
 
 use Illuminate\Database\Eloquent\Model;
 use VATSIMUK\Support\Auth\Models\Concerns\HasRemoteRelationships;

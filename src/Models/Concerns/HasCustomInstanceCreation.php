@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Models\Concerns;
-
 
 trait HasCustomInstanceCreation
 {
@@ -14,10 +12,11 @@ trait HasCustomInstanceCreation
      */
     protected function newRelatedInstance($class)
     {
-        if(is_object($class)){
-            if(method_exists($class, 'setRelationshipBuilder')){
+        if (is_object($class)) {
+            if (method_exists($class, 'setRelationshipBuilder')) {
                 $class->setRelationshipBuilder(true);
             }
+
             return $class;
         }
 
@@ -25,7 +24,7 @@ trait HasCustomInstanceCreation
             if (! $instance->getConnectionName()) {
                 $instance->setConnection($this->connection);
             }
-            if(method_exists($instance, 'setRelationshipBuilder')){
+            if (method_exists($instance, 'setRelationshipBuilder')) {
                 $instance->setRelationshipBuilder(true);
             }
         });

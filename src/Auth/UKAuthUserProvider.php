@@ -1,6 +1,5 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Auth;
 
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -32,12 +31,18 @@ class UKAuthUserProvider implements UserProvider
         return $this->model::find($identifier);
     }
 
-    public function retrieveByToken($identifier, $token){
+    public function retrieveByToken($identifier, $token)
+    {
         return $this->model::findWithAccessToken($token);
     }
 
-    public function updateRememberToken(Authenticatable $user, $token){}
-    public function retrieveByCredentials(array $credentials){}
+    public function updateRememberToken(Authenticatable $user, $token)
+    {
+    }
+
+    public function retrieveByCredentials(array $credentials)
+    {
+    }
 
     /**
      * Validate a user against the given credentials.

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Facades;
-
 
 use Illuminate\Support\Facades\Facade;
 
@@ -13,5 +11,8 @@ class PermissionValidity extends Facade
      *
      * @return string
      */
-    protected static function getFacadeAccessor() { return 'permissionvalidity'; }
+    protected static function getFacadeAccessor()
+    {
+        return 'permissionvalidity';
+    }
 }

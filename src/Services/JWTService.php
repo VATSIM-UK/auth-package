@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Services;
-
 
 use Illuminate\Support\Facades\Cookie;
 use Lcobucci\JWT\Builder;
@@ -15,7 +13,7 @@ use VATSIMUK\Support\Auth\Models\RemoteUser;
 class JWTService
 {
     /**
-     * Creates a local auth JWT for the given user
+     * Creates a local auth JWT for the given user.
      *
      * @param RemoteUser $user
      * @param $expires_at
@@ -40,7 +38,7 @@ class JWTService
     }
 
     /**
-     * Validates a local auth JWT, and returns the user
+     * Validates a local auth JWT, and returns the user.
      *
      * @param string $token
      * @return bool|RemoteUser
@@ -49,7 +47,7 @@ class JWTService
     {
         $token = (new Parser())->parse($token);
 
-        if (!$token->verify(new Sha256(), new Key(config('app.secret')))) {
+        if (! $token->verify(new Sha256(), new Key(config('app.secret')))) {
             return false;
         }
 
@@ -66,7 +64,7 @@ class JWTService
         ];
 
         // If has session id, check is same session. If not, force authentication
-        if ($userBaseInfo['has_password'] && (!Cookie::get('ukauth_sesh_id') || decrypt(Cookie::get('ukauth_sesh_id')) != $issuedAt.$userBaseInfo['id'])) {
+        if ($userBaseInfo['has_password'] && (! Cookie::get('ukauth_sesh_id') || decrypt(Cookie::get('ukauth_sesh_id')) != $issuedAt.$userBaseInfo['id'])) {
             return false;
         }
 

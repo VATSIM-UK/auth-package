@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Tests;
-
 
 use Illuminate\Support\Facades\Http;
 use VATSIMUK\Support\Auth\Models\RemoteUser;
@@ -13,7 +11,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getPackageProviders($app)
     {
         return [
-            UKAuthServiceProvider::class
+            UKAuthServiceProvider::class,
         ];
     }
 
@@ -21,10 +19,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         parent::resolveApplicationConfiguration($app);
 
-        $defaultConfig = include(dirname(__FILE__) . '/../config/ukauth.php');
+        $defaultConfig = include dirname(__FILE__).'/../config/ukauth.php';
 
         foreach ($defaultConfig as $key => $value) {
-            $app['config']->set('ukauth.' . $key, $value);
+            $app['config']->set('ukauth.'.$key, $value);
         }
 
         $app['config']->set('ukauth.auth_user_model', RemoteUser::class);
@@ -33,11 +31,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     public function mockGuzzleClientResponse($responses)
     {
-        if (!is_array($responses)) {
+        if (! is_array($responses)) {
             Http::fakeSequence()
                 ->whenEmpty($responses);
         } else {
-
             $sequence = Http::fakeSequence();
             foreach ($responses as $response) {
                 $sequence->pushResponse($response);

@@ -3,8 +3,7 @@
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-
-if (!function_exists('data_has')) {
+if (! function_exists('data_has')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
@@ -20,11 +19,11 @@ if (!function_exists('data_has')) {
 
         $key = is_array($key) ? $key : explode('.', $key);
 
-        while (!is_null($segment = array_shift($key))) {
+        while (! is_null($segment = array_shift($key))) {
             if ($segment === '*') {
                 if ($target instanceof Collection) {
                     $target = $target->all();
-                } elseif (!is_array($target)) {
+                } elseif (! is_array($target)) {
                     return false;
                 }
 
@@ -50,10 +49,9 @@ if (!function_exists('data_has')) {
     }
 }
 
-
-if (!function_exists('array_to_dot')) {
+if (! function_exists('array_to_dot')) {
     /**
-     * Extends the Laravel Arr::dot() function to allow for schema arrays rather than arrays with associated values
+     * Extends the Laravel Arr::dot() function to allow for schema arrays rather than arrays with associated values.
      *
      * @param $array
      * @return Collection
@@ -66,15 +64,14 @@ if (!function_exists('array_to_dot')) {
             $exploded = explode('.', $key);
             array_pop($exploded);
             $exploded[] = $value;
-            $newValue = implode(".", $exploded);
+            $newValue = implode('.', $exploded);
 
             return $newValue;
         })->sort()->values();
-
     }
 }
 
-if (!function_exists('arrayToObject')) {
+if (! function_exists('arrayToObject')) {
     /**
      * @param ?array $array
      * @return stdClass

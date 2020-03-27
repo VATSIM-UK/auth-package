@@ -1,8 +1,6 @@
 <?php
 
-
 namespace VATSIMUK\Support\Auth\Models\Relationships;
-
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Support\Arrayable;
@@ -15,7 +13,7 @@ use VATSIMUK\Support\Auth\Models\RemoteModel;
 class RemoteRelationshipBuilder extends RemoteBuilder
 {
     /**
-     * Find's the related model by ID
+     * Find's the related model by ID.
      *
      * @param array $columns
      * @param bool $checkAPI
@@ -23,29 +21,28 @@ class RemoteRelationshipBuilder extends RemoteBuilder
      * @throws APITokenInvalidException
      * @throws BindingResolutionException
      */
-
     public function first($columns = [], bool $checkAPI = false)
     {
         $details = $this->findRelationshipDetails();
 
         // If we get null back from a relationship we are pretty sure exists (i.e. is in database), we will just return
         // the primary key
-        return parent::first($columns = []) ?? (!$checkAPI ? $this->model::initModelWithData([
-                $this->model->getKeyName() => $details->parentKey
-            ]) : null);
+        return parent::first($columns = []) ?? (! $checkAPI ? $this->model::initModelWithData([
+            $this->model->getKeyName() => $details->parentKey,
+        ]) : null);
     }
 
     public function find($id, $columns = [], string $token = null, bool $checkAPI = false)
     {
         // If we get null back from a relationship we are pretty sure exists (i.e. is in database), we will just return
         // the primary key
-        return parent::find($id, $columns, $token) ?? (!$checkAPI ? $this->model::initModelWithData([
-                $this->model->getKeyName() => $id
-            ]) : null);
+        return parent::find($id, $columns, $token) ?? (! $checkAPI ? $this->model::initModelWithData([
+            $this->model->getKeyName() => $id,
+        ]) : null);
     }
 
     /**
-     * Find's many of the related model
+     * Find's many of the related model.
      *
      * @param array|Arrayable $ids
      * @param array $columns
@@ -66,7 +63,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
         // with just the primary key
         return $result->isNotEmpty() ? $result : collect($ids)->transform(function ($id) {
             return $this->model::initModelWithData([
-                $this->model->getKeyName() => $id
+                $this->model->getKeyName() => $id,
             ]);
         });
     }
@@ -92,7 +89,6 @@ class RemoteRelationshipBuilder extends RemoteBuilder
 
         $builder = $this->model->newQueryWithoutScopes();
 
-
         try {
             $models = $builder->findMany($results->pluck($details->relatedPivotKey)->all(), $columns);
         } catch (APITokenInvalidException $e) {
@@ -105,7 +101,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
             $models = collect();
             foreach ($results->pluck($details->relatedPivotKey)->all() as $relatedID) {
                 $models->push($this->related::initModelWithData([
-                    'id' => $relatedID
+                    'id' => $relatedID,
                 ]));
             }
         }
@@ -113,7 +109,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
         //Post-humorously add in the pivot table attributes
         $models->transform(function ($model) use ($results, $details) {
             $pivotAttributes = collect($results->firstWhere($details->relatedPivotKey, $model->getKey()))->mapWithKeys(function ($value, $key) {
-                return ['pivot_' . $key => $value];
+                return ['pivot_'.$key => $value];
             });
 
             return $model->setRawAttributes(array_merge($pivotAttributes->all(), $model->getAttributes()));
@@ -123,7 +119,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     }
 
     /**
-     * Determine, for a remote model, if the given remote model exists on the local model
+     * Determine, for a remote model, if the given remote model exists on the local model.
      *
      * @param bool $checkAPI If false, will check assert that the model's ID is assign to the local model via pivot,
      *                          etc. If true, will actually call the API and check the model also exists on that end.
@@ -136,11 +132,12 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     {
         $details = $this->findRelationshipDetails();
 
-        if (!$details->table) {
+        if (! $details->table) {
             // Likely a one-to-one relationship. As long as an id is given, it is true
             if (($key = $this->query->wheres[0]['value']) == null) {
                 return false;
             }
+
             return $checkAPI ? $this->find($key, ['id'], null, true) != null : true;
         }
 
@@ -150,12 +147,11 @@ class RemoteRelationshipBuilder extends RemoteBuilder
 
             $existsInPivot = $this->query->count() > 0;
 
-
-            if (!$existsInPivot) {
+            if (! $existsInPivot) {
                 return false;
             }
 
-            if (!$checkAPI) {
+            if (! $checkAPI) {
                 return true;
             }
 
@@ -167,9 +163,8 @@ class RemoteRelationshipBuilder extends RemoteBuilder
         return parent::exists();
     }
 
-
     /**
-     * Finds the database key for the model with the relationship, and loads table and foreignKeys
+     * Finds the database key for the model with the relationship, and loads table and foreignKeys.
      *
      * @return \stdClass|null
      */
@@ -180,11 +175,11 @@ class RemoteRelationshipBuilder extends RemoteBuilder
         }
 
         if (count($this->query->wheres) > 0) {
-            return (object)[
+            return (object) [
                 'table' => $this->determinePivotTable(),
                 'foreignPivotKey' => $this->determineForeignPivotKeyName(),
                 'parentKey' => $this->determineParentModelKey(),
-                'relatedPivotKey' => $this->determineRelatedPivotKeyName()
+                'relatedPivotKey' => $this->determineRelatedPivotKeyName(),
             ];
         }
 
@@ -192,7 +187,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     }
 
     /**
-     * Removes the pivot table name from a column
+     * Removes the pivot table name from a column.
      *
      * @param $columnWithTable
      * @return string
@@ -205,7 +200,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
             unset($exploded[0]);
         }
 
-        return implode(".", $exploded);
+        return implode('.', $exploded);
     }
 
     private function getValueForWhereColumn($columnWithTable)
@@ -214,7 +209,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     }
 
     /**
-     * Deduce the pivot table for relationship
+     * Deduce the pivot table for relationship.
      *
      * @return string|null
      */
@@ -224,7 +219,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     }
 
     /**
-     * Deduce the foreign pivot key name for the relationship
+     * Deduce the foreign pivot key name for the relationship.
      *
      * @return string|null
      */
@@ -234,13 +229,13 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     }
 
     /**
-     * Deduce the related pivot key name for the relationship
+     * Deduce the related pivot key name for the relationship.
      *
      * @return string|null
      */
     private function determineRelatedPivotKeyName(): ?string
     {
-        if (!isset($this->query->joins[0]->wheres[0]['second'])) {
+        if (! isset($this->query->joins[0]->wheres[0]['second'])) {
             return null;
         }
 
@@ -248,7 +243,7 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     }
 
     /**
-     * Deduce the parent model's key for the relationship
+     * Deduce the parent model's key for the relationship.
      *
      * @return string|null
      */
