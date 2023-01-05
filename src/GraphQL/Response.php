@@ -93,6 +93,7 @@ class Response
 
     /**
      * Gets the results from the query.
+     *
      * @return stdClass|null
      */
     public function getResults()
@@ -106,7 +107,8 @@ class Response
 
     /**
      * Gets the results from the query hydrated as the given model.
-     * @param RemoteModel|string $modelClass
+     *
+     * @param  RemoteModel|string  $modelClass
      * @return RemoteModel|Collection|null
      */
     public function getHydratedResults($modelClass)
@@ -139,8 +141,8 @@ class Response
      * Generates a error response class.
      *
      * @param $query
-     * @param string $message
-     * @param null $data
+     * @param  string  $message
+     * @param  null  $data
      * @return Response
      */
     public static function newServerErrorResponse($query, $message = 'There was a server error trying to run this query', $data = null)

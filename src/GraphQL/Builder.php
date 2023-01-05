@@ -26,10 +26,11 @@ class Builder
 
     /**
      * Builder constructor.
-     * @param string $method
-     * @param array $columns
-     * @param string|null $arguments
-     * @param string $action
+     *
+     * @param  string  $method
+     * @param  array  $columns
+     * @param  string|null  $arguments
+     * @param  string  $action
      */
     public function __construct(string $method, array $columns, string $arguments = null, string $action = 'query')
     {
@@ -42,8 +43,9 @@ class Builder
     /**
      * Executes the current query.
      *
-     * @param string $token Optional Auth API token
+     * @param  string  $token  Optional Auth API token
      * @return Response
+     *
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */
@@ -161,7 +163,7 @@ class Builder
     /**
      * Iterates through array of columns supplied, and converts into GraphQL query format.
      *
-     * @param array $rawColumns
+     * @param  array  $rawColumns
      * @return string
      */
     private function buildColumns(array $rawColumns): string

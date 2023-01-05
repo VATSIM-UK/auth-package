@@ -7,8 +7,8 @@ if (! function_exists('data_has')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
-     * @param mixed $target
-     * @param string|array|int $key
+     * @param  mixed  $target
+     * @param  string|array|int  $key
      * @return mixed
      */
     function data_has($target, $key)
@@ -73,7 +73,7 @@ if (! function_exists('array_to_dot')) {
 
 if (! function_exists('arrayToObject')) {
     /**
-     * @param ?array $array
+     * @param  ?array  $array
      * @return stdClass
      */
     function arrayToObject($array)

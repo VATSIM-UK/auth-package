@@ -26,9 +26,10 @@ class RemoteUser extends RemoteModel
     /**
      * Finds the user by their Auth API Access Token.
      *
-     * @param string $token
-     * @param array $columns
+     * @param  string  $token
+     * @param  array  $columns
      * @return Collection|RemoteModel|RemoteUser|null
+     *
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */

@@ -15,9 +15,10 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     /**
      * Find's the related model by ID.
      *
-     * @param array $columns
-     * @param bool $checkAPI
+     * @param  array  $columns
+     * @param  bool  $checkAPI
      * @return Collection|RemoteModel|null
+     *
      * @throws APITokenInvalidException
      * @throws BindingResolutionException
      */
@@ -44,10 +45,11 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     /**
      * Find's many of the related model.
      *
-     * @param array|Arrayable $ids
-     * @param array $columns
-     * @param string|null $token
+     * @param  array|Arrayable  $ids
+     * @param  array  $columns
+     * @param  string|null  $token
      * @return Collection
+     *
      * @throws APITokenInvalidException
      * @throws BindingResolutionException
      */
@@ -71,8 +73,9 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     /**
      * Overrides Default Function. Retrieves models via pivot (For BelongsToMany, etc.).
      *
-     * @param array $columns
+     * @param  array  $columns
      * @return array|\Illuminate\Database\Eloquent\Collection|RemoteModel[]|RemoteBuilder[]
+     *
      * @throws BindingResolutionException
      */
     public function getModels($columns = ['*'])
@@ -121,10 +124,10 @@ class RemoteRelationshipBuilder extends RemoteBuilder
     /**
      * Determine, for a remote model, if the given remote model exists on the local model.
      *
-     * @param bool $checkAPI If false, will check assert that the model's ID is assign to the local model via pivot,
+     * @param  bool  $checkAPI  If false, will check assert that the model's ID is assign to the local model via pivot,
      *                          etc. If true, will actually call the API and check the model also exists on that end.
-     *
      * @return bool
+     *
      * @throws APITokenInvalidException
      * @throws BindingResolutionException
      */

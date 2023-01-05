@@ -17,7 +17,7 @@ class MockJsonResponse
     /**
      * Represents a successfully retrieved user.
      *
-     * @param string $method
+     * @param  string  $method
      * @return mixed
      */
     public static function successfulResponse($method = 'user')
