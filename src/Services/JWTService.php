@@ -15,9 +15,9 @@ class JWTService
     /**
      * Creates a local auth JWT for the given user.
      *
-     * @param RemoteUser $user
-     * @param $expires_at
-     * @param $accessToken
+     * @param  RemoteUser  $user
+     * @param  $expires_at
+     * @param  $accessToken
      * @return Token
      */
     public static function createToken(RemoteUser $user, $expires_at, $accessToken): Token
@@ -40,7 +40,7 @@ class JWTService
     /**
      * Validates a local auth JWT, and returns the user.
      *
-     * @param string $token
+     * @param  string  $token
      * @return bool|RemoteUser
      */
     public static function validateTokenAndGetUser(string $token)

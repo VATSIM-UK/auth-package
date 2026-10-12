@@ -12,6 +12,7 @@ trait HasRatings
      * Defines fields used for the atcRating field sub-selection.
      *
      * @uses VATSIM-UK/auth/graphql/schema.graphql - type Rating
+     *
      * @var array
      */
     public static $RATINGS_SCHEMA = [

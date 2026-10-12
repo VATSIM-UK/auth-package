@@ -23,7 +23,7 @@ class UKAuthUserProvider implements UserProvider
     /**
      * Retrieve a user by their unique identifier.
      *
-     * @param mixed $identifier
+     * @param  mixed  $identifier
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function retrieveById($identifier)
@@ -47,8 +47,8 @@ class UKAuthUserProvider implements UserProvider
     /**
      * Validate a user against the given credentials.
      *
-     * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param array $credentials
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  array  $credentials
      * @return bool
      */
     public function validateCredentials(Authenticatable $user, array $credentials)

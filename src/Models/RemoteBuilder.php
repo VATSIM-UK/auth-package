@@ -49,10 +49,10 @@ class RemoteBuilder extends Builder
     /**
      * RemoteBuilder constructor.
      *
-     * @param QueryBuilder $query
-     * @param string|null $token Optional Auth API token
+     * @param  QueryBuilder  $query
+     * @param  string|null  $token  Optional Auth API token
      */
-    public function __construct(QueryBuilder $query, string $token = null)
+    public function __construct(QueryBuilder $query, ?string $token = null)
     {
         $this->token = $token;
         parent::__construct($query);
@@ -76,7 +76,7 @@ class RemoteBuilder extends Builder
      * Mostly used for scoping on the model.
      * Can be chained, e.g. RemoteModel::withColumns(["atcRating.code"])->find(1).
      *
-     * @param array $columns
+     * @param  array  $columns
      * @return RemoteBuilder
      */
     public function withColumns(array $columns): self
@@ -89,8 +89,9 @@ class RemoteBuilder extends Builder
     /**
      * Parses built query, and performs query.
      *
-     * @param array $columns
+     * @param  array  $columns
      * @return Collection
+     *
      * @throws APITokenInvalidException
      * @throws BindingResolutionException
      */
@@ -124,14 +125,15 @@ class RemoteBuilder extends Builder
     /**
      * Find the remote model with the given ID.
      *
-     * @param mixed $id
-     * @param array|null $columns
-     * @param string|null $token Optional Auth API token for the request
+     * @param  mixed  $id
+     * @param  array|null  $columns
+     * @param  string|null  $token  Optional Auth API token for the request
      * @return RemoteModel|Collection|Response|null
+     *
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */
-    public function find($id, $columns = [], string $token = null)
+    public function find($id, $columns = [], ?string $token = null)
     {
         if (is_array($id) || $id instanceof Arrayable) {
             return $this->findMany($id, $columns);
@@ -155,14 +157,15 @@ class RemoteBuilder extends Builder
     /**
      * Finds multiple remote model's for the given IDs.
      *
-     * @param Arrayable|array $ids
-     * @param array $columns
-     * @param string|null $token Optional Auth API token for the request
+     * @param  Arrayable|array  $ids
+     * @param  array  $columns
+     * @param  string|null  $token  Optional Auth API token for the request
      * @return Collection|Response
+     *
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */
-    public function findMany($ids, $columns = [], string $token = null)
+    public function findMany($ids, $columns = [], ?string $token = null)
     {
         $argument = 'ids:'.json_encode($ids);
 
@@ -184,8 +187,9 @@ class RemoteBuilder extends Builder
     /**
      * Execute the query and get the first result.
      *
-     * @param array $columns
+     * @param  array  $columns
      * @return RemoteModel|object|static|null
+     *
      * @throws APITokenInvalidException
      * @throws BindingResolutionException
      */
@@ -202,7 +206,7 @@ class RemoteBuilder extends Builder
     /**
      * Generates a list of fields to get for the user model, using defaults or supplied list of fields.
      *
-     * @param array $columns
+     * @param  array  $columns
      * @return array
      */
     public function generateParams($columns = []): array
@@ -239,7 +243,7 @@ class RemoteBuilder extends Builder
     }
 
     /**
-     * @param string|null $token
+     * @param  string|null  $token
      */
     public function setToken(?string $token): void
     {

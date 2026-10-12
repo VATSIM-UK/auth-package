@@ -18,8 +18,8 @@ class UKAuthGuard implements Guard
     /**
      * Create a new authentication guard.
      *
-     * @param UserProvider $provider
-     * @param Request $request
+     * @param  UserProvider  $provider
+     * @param  Request  $request
      * @return void
      */
     public function __construct(UserProvider $provider, Request $request)
@@ -77,7 +77,7 @@ class UKAuthGuard implements Guard
     /**
      * Validate a user's credentials.
      *
-     * @param array $credentials
+     * @param  array  $credentials
      * @return bool
      */
     public function validate(array $credentials = [])
@@ -112,7 +112,7 @@ class UKAuthGuard implements Guard
     /**
      * Set the current user.
      *
-     * @param Authenticatable $user
+     * @param  Authenticatable  $user
      * @return void
      */
     public function setUser(Authenticatable $user)
