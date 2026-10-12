@@ -7,8 +7,8 @@ if (! function_exists('data_has')) {
     /**
      * Get an item from an array or object using "dot" notation.
      *
-     * @param mixed $target
-     * @param string|array|int $key
+     * @param  mixed  $target
+     * @param  string|array|int  $key
      * @return mixed
      */
     function data_has($target, $key)
@@ -53,7 +53,7 @@ if (! function_exists('array_to_dot')) {
     /**
      * Extends the Laravel Arr::dot() function to allow for schema arrays rather than arrays with associated values.
      *
-     * @param $array
+     * @param  $array
      * @return Collection
      */
     function array_to_dot($array): Collection
@@ -73,7 +73,7 @@ if (! function_exists('array_to_dot')) {
 
 if (! function_exists('arrayToObject')) {
     /**
-     * @param ?array $array
+     * @param  ?array  $array
      * @return stdClass
      */
     function arrayToObject($array)

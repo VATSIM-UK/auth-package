@@ -13,7 +13,7 @@ class PermissionValidityService
     /**
      * Determines whether the permission exists as defined by the permissions files.
      *
-     * @param string $permission
+     * @param  string  $permission
      * @return bool
      */
     public function isValidPermission($permission): bool
@@ -43,8 +43,8 @@ class PermissionValidityService
      *
      * ***IMPORTANT*** Changes to this function's core logic should also be reflected in src/js/permissionValidity.js
      *
-     * @param string $permission
-     * @param Collection|MorphMany|array $permissions
+     * @param  string  $permission
+     * @param  Collection|MorphMany|array  $permissions
      * @return bool
      */
     public function permissionSatisfiedByPermissions(string $permission, $permissions): bool

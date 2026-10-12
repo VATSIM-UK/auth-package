@@ -10,8 +10,7 @@ trait HasPermissions
     /**
      * Determine if the model may perform the given permission.
      *
-     * @param string $permission
-     *
+     * @param  string  $permission
      * @return bool
      */
     public function hasPermissionTo($permission): bool
@@ -22,8 +21,7 @@ trait HasPermissions
     /**
      * Determine if the model has any of the given permissions.
      *
-     * @param array ...$permissions
-     *
+     * @param  array  ...$permissions
      * @return bool
      */
     public function hasAnyPermission(...$permissions): bool
@@ -43,8 +41,7 @@ trait HasPermissions
     /**
      * Determine if the model has all of the given permissions.
      *
-     * @param array ...$permissions
-     *
+     * @param  array  ...$permissions
      * @return bool
      */
     public function hasAllPermissions(...$permissions): bool

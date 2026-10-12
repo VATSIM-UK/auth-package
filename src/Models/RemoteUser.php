@@ -26,13 +26,14 @@ class RemoteUser extends RemoteModel
     /**
      * Finds the user by their Auth API Access Token.
      *
-     * @param string $token
-     * @param array $columns
+     * @param  string  $token
+     * @param  array  $columns
      * @return Collection|RemoteModel|RemoteUser|null
+     *
      * @throws BindingResolutionException
      * @throws APITokenInvalidException
      */
-    public static function findWithAccessToken(string $token, array $columns = null)
+    public static function findWithAccessToken(string $token, ?array $columns = null)
     {
         $query = new Builder('authUser', static::generateParams($columns));
         $response = $query->execute($token);
